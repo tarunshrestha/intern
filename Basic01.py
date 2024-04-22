@@ -95,23 +95,75 @@
 # 123454321
 
 # Enter your code here. Read input from STDIN. Print output to STDOUT
-# N = int(input(""))
+# N = 5
 # result = ''
 # old = ''
 # for i in range(1, N+1):
-#     result = str(result) + str(i)
-#     if len(result) > 1:
-#         print(result + old[::-1])
-#     else:
-#         print(i)
-#     old = old + str(i)
+#     result += str(i)
+#     print(result + old [::-1])
+#     old += str(i)
 
-    
-mylist = [3, 4, 3, 2, 1]
-new = []
-for i in mylist:
-    if i not in new:
-        new.append(i)
+#------------------------------------------------------------------------------------------------------------------------------------------
+# Sets of python
+# mylist = [3, 4, 3, 2, 1]
+# new = []
+# for i in mylist:
+#     if i not in new:
+#         new.append(i)
         
-print(new)
-print(set(mylist))
+# print(new)
+# print(set(mylist))
+
+#------------------------------------------------------------------------------------------------------------------------------------------
+# A = "I,love,football"
+# B = "I,dont,love,f,football"
+
+# common = []
+# unique = []
+# newList = [i for i in A.split(',')]
+# # for i in A.split(','):
+# #     print(i)
+# #     newList.append(i)
+    
+# print(newList)
+# print(A.split(','))
+
+# for i in B.split(','):
+#     if i in newList:
+#         common.append(i)
+#     else:
+#         unique.append(i)
+
+# # print(newList)    
+# print(common)
+# print(unique)
+#------------------------------------------------------------------------------------------------------------------------------------------
+
+# def split(word,op=' '):
+#     newList = []
+#     new_word=''
+#     for i in word:
+#         new_word += str(i)
+#         # print(i)
+#         print(new_word)
+#         if i is op:
+#             newList.append(new_word[:-1])
+#             new_word = ''
+#     newList.append(new_word)
+#     return newList
+
+# A = "I love football"
+# print(split(A))
+ 
+ #------------------------------------------------------------------------------------------------------------------------------------------        
+
+N = 5
+mylist = []
+result = ''
+old = ''
+for i in range(1, N+1):
+    result = result + str(i)
+    print(int(result + old[::-1]))
+    old += str(i)
+   
+
