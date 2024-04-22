@@ -45,4 +45,73 @@
 #         result = result + str(i)
 #     print(int(result)) 
 #------------------------------------------------------------------------------------------------------------------------------------------
+# ABC is a right triangle,  at .
+# Therefore, .
 
+# Point  is the midpoint of hypotenuse .
+
+# You are given the lengths  and .
+# Your task is to find  (angle , as shown in the figure) in degrees.
+
+# Input Format
+
+# The first line contains the length of side .
+# The second line contains the length of side .
+
+# Constraints
+
+
+# Lengths  and  are natural numbers.
+# Output Format
+
+# Output  in degrees.
+
+# Note: Round the angle to the nearest integer.
+
+# Examples:
+# If angle is 56.5000001°, then output 57°.
+# If angle is 56.5000000°, then output 57°.
+# If angle is 56.4999999°, then output 56°.
+
+#Solution:
+
+# import math
+
+# AB = int(input("Enter AB:"))
+# BC = int(input("Enter BC:"))
+
+# AC = math.sqrt(AB**2 + BC**2)
+
+# degree = round(math.degrees(math.asin(AB / AC)))
+
+# print(f"{degree}\u00b0") 
+#------------------------------------------------------------------------------------------------------------------------------------------
+# Input = 5
+# output:
+# 1
+# 121
+# 12321
+# 1234321
+# 123454321
+
+# Enter your code here. Read input from STDIN. Print output to STDOUT
+# N = int(input(""))
+# result = ''
+# old = ''
+# for i in range(1, N+1):
+#     result = str(result) + str(i)
+#     if len(result) > 1:
+#         print(result + old[::-1])
+#     else:
+#         print(i)
+#     old = old + str(i)
+
+    
+mylist = [3, 4, 3, 2, 1]
+new = []
+for i in mylist:
+    if i not in new:
+        new.append(i)
+        
+print(new)
+print(set(mylist))
