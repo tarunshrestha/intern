@@ -20,6 +20,10 @@
     
 #     # Write your logic here
 #     if year % 4 == 0:
+#         if year % 100 == 0:
+#             if year % 400 == 0:
+#                 return True
+#             return leap
 #         return True
 #     return leap
 
@@ -27,3 +31,18 @@
 # print(is_leap(year))
 
 #------------------------------------------------------------------------------------------------------------------------------------------
+# The included code stub will read an integer, , from STDIN.
+# Without using any string methods, try to print the following:
+# Note that "" represents the consecutive values in between.
+# Print the string .
+# Input Format
+# The first line contains an integer .
+# Print the list of integers from  through  as a string, without spaces.
+# if __name__ == '__main__':
+#     n = int(input())
+#     result = ''
+#     for i in range(n+ 1):
+#         result = result + str(i)
+#     print(int(result)) 
+#------------------------------------------------------------------------------------------------------------------------------------------
+
