@@ -157,6 +157,65 @@
  
  #------------------------------------------------------------------------------------------------------------------------------------------        
 
+# N = 5
+# mylist = []
+# result = ''
+# old = ''
+# for i in range(1, N+1):
+#     result = result + str(i)
+#     print(int(result + old[::-1]))
+#     old += str(i)
+    
+# Solution:
+ #------------------------------------------------------------------------------------------------------------------------------------------        
+
+
+# def count_substring(string, sub_string):
+#     num = 0
+#     for i in range(0, len(string)):
+#         if string[i] in sub_string:
+#             if sub_string[0] == string[i] :
+#                 try:
+#                     if sub_string[1] == string[i+1]:
+#                         num  += 1
+#                 except:
+#                     if sub_string[1] == string[i:]:
+#                         num  += 1
+#     return num
+
+# def count_substring(string, sub_string):
+#     num = 0
+#     for i in range(0, len(string)):
+#         if string[i] == sub_string[0]:
+#             test = 0
+#             for j in range(0, len(sub_string)):
+#                 try:
+#                     if string[i+test] == sub_string[j]:
+#                         test += 1
+#                 except:
+#                     if string[i:] == sub_string[j]:
+#                         test += 1
+#             if test == len(sub_string):
+#                 num += 1
+                
+#             # print(sub_string)
+#             # if sub_string == string[i:len(sub_string)+1]:
+#             #     num  += 1
+#     return num
+
+# print(count_substring('ABCDCDC','CDC'))
+
+
+   
+
+# 1
+# 121
+#321 12
+# 1234321
+# 123454321
+
+
+
 N = 5
 mylist = []
 result = ''
@@ -165,5 +224,3 @@ for i in range(1, N+1):
     result = result + str(i)
     print(int(result + old[::-1]))
     old += str(i)
-   
-
