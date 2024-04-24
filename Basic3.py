@@ -49,11 +49,25 @@
 # print(myLis is a)
 # print(myLis is b)
 
-def tryi():
-    for i in range(0, 5):
-        yield i
+# def tryi():
+#     for i in range(0, 5):
+#         yield i
     
-print(next(tryi()))
+# print(next(tryi()))
 
-for i in tryi():
-    print(i)
+# for i in tryi():
+#     print(i)
+
+import copy
+
+a = [[1, 2, 3, 4], [2, 2, 2, 2]]
+b = copy.deepcopy(a)
+
+b[0][ 0] = 100
+print(a)
+print(b, id(b), id(a))
+
+a = [1, 2, 3, 4]
+hi = list(map(lambda x: x < 2, a))
+hi = list(filter(lambda x: x ** 2 < 2, a))
+print(hi)
