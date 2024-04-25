@@ -48,3 +48,52 @@
 # ma = list(filter(lambda x: x  ** 2), myList)
 # print(ma)
 
+# =================== Guess Game =======================================================================
+
+# import random 
+# from os import system 
+
+
+# def main():
+#     system('reset')
+#     print("Welcome to the guessing Game:")
+#     rounds = 0
+#     target = random.randint(0, 100)
+#     won = False
+#     print(target)
+#     while rounds < 3:
+#         rounds += 1
+#         player_answer = input("Guess the number from 0 to 100:").strip()
+#         if player_answer == '':
+#             player_answer = 0
+#         player_answer = int(player_answer)
+#         if player_answer == target:
+#             won = True
+#             break
+#         if player_answer > target:
+#             print("Answer is greater then Target.")
+#         else:
+#             print("Answer is lower then Target.")
+#         print("")
+#     if won:
+#         print("You Found the Target.")
+#     else:
+#         print("You Lose!")
+#     end = input("Press 'y' to play again and 'n' to close:").strip()
+#     if end.lower() != 'y':
+#         return "Good Bye!"
+#     else:
+#         main()
+
+#     print('Good Bye!')
+
+# main()
+
+# =================== Facatorial ==============================
+def factor(n):
+    if n == 1 or n == 0:
+        return 1
+    else:
+         return n * factor(n-1)
+    
+print(factor(5))
