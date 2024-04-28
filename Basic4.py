@@ -98,3 +98,28 @@
     
 # print(factor(5))
 
+# ==================================================== OOP (Object Oriented Programing) ============================================================================
+class Student:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+    def get_name(self):
+        print(self.name,'is the name.')
+    
+    def set_name(self, name):
+        self.name = name
+        return self.name
+    
+    def __str__(self):
+        return f"Name: {self.name} and Age: {self.age}"
+    
+    def __del__(self):
+        print("Account Deleted")
+
+ram =  Student('ram', 15)
+ram.set_name('meme')
+print(ram.set_name('haha'))
+# print(ram)
+del ram
+
