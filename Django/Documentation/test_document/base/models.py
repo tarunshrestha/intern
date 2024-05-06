@@ -22,3 +22,24 @@ class Choice(models.Model):
 
     def __str__(self):
         return self.choice_text
+    
+# ================ Practice ==================================
+class School(models.Model):
+    school_name = models.CharField(max_length=200, unique=True)
+    school_location = models.CharField(max_length=200)
+    school_number = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.school_name
+    
+class Student(models.Model):
+    school_name = models.ForeignKey(School, on_delete=models.CASCADE)
+    student_name = models.CharField(max_length=200)
+    student_location = models.CharField(max_length=200)
+    student_number = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.student_name
+    
+
+
