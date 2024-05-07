@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <h2>Authors:</h2>
+    {% for author in Authors %}
+        <b>Name:</b> {{author.name}} , <b>Email:</b> {{author.email}}
+        <br><br>
+    {%endfor%}
+
+    <h2>Entries:</h2>
+    {% for entry in Entry %}
+        <b>Title:</b> {{entry.headline}}<br> 
+        <b>Published-Date:</b> {{entry.pub_date}}<br>
+        <b>Authors:</b>
+        {% for name in  entry.author.all %}
+           {{name}}, 
+        {%endfor%}
+         <br><br>
+    {%endfor%}
+    
+</body>
+</html>
