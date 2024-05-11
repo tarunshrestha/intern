@@ -13,6 +13,8 @@ class TypeEnum(enum.Enum):
     }
 
 # Create your models here.
+
+
 class Faculty(models.Model):
     name = models.CharField(max_length=100)
     
@@ -27,7 +29,6 @@ class BaseModel(models.Model):
     birth_date = models.DateField(default=None)
     address = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=15)
-    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
         abstract = True
@@ -35,12 +36,16 @@ class BaseModel(models.Model):
 
 class Teacher(BaseModel):
     id_type = enum.EnumField(TypeEnum,default = TypeEnum.Teacher)
+    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE, null=True, blank=True, related_name='teachers')
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
 
 class Student(BaseModel):
     id_type = enum.EnumField(TypeEnum,default = TypeEnum.Student)
+    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE, null=True, blank=True, related_name='students')
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
     
