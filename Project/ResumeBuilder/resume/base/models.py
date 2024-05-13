@@ -21,7 +21,7 @@ class Language(models.Model):
         return self.name 
 
 class CustomUser(AbstractBaseUser):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='custom_user', default=00)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='custom_user', default=0)
     first_name = models.CharField(max_length=50, null=True)
     last_name = models.CharField(max_length=50, null=True)
     username = models.CharField(max_length=50, unique=True)
