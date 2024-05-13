@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{user.username}}</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+</head>
+<body>
+    <h1>UserProfile</h1>
+    <a href="{% url 'update_profile' user.id %}">Update Profile</a>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>{{user.username}}</h1>
+        <h2>{{user.descibe}}</h2>
+        <p>Summary of my experience and skills.</p>
+        <h2>Education</h2>
+        <ul>
+          <li>Bachelor's Degree in Computer Science, XYZ University</li>
+          <li>Master's Degree in Data Science, ABC University</li>
+        </ul>
+        <h2>Work Experience</h2>
+        <ul>
+          <li>Software Engineer, ABC Company</li>
+          <li>Data Scientist, DEF Company</li>
+        </ul>
+      </div>
+    </div>
+</div>
+
+
+
+</body>
+</html>

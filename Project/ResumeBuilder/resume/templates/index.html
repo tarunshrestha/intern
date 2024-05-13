@@ -6,13 +6,13 @@
     <title>Home</title>
 </head>
 <body>
-    {% if user.authenticated %}
+    {% if user.is_authenticated  %}
     
      <h1>Home, {{user.username}}</h1>
      <p>Lets make your CV by clicking below,</p>
-     <a href="#">click here.</a>
+     <a href="{% url 'profile' user.id %}">click here.</a>
      <a href="{% url 'logout'%}">logout</a>
-     <a href="{% url 'login' %}">login</a><br>
+     <!-- <a href="{% url 'login' %}">login</a><br> -->
 
 
      {% else %}

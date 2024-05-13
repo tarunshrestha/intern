@@ -15,14 +15,14 @@
       </div>
 
     {% endfor %}
-    <container>
+    <div class="container">
         <h1>Login:</h1>
         <form action="{% url 'login' %}" method="POST">
         {% csrf_token %}
-        {{form}}
+        {{form}}<br>
         <input type="submit" value="Register" class="btn btn-success">
 
-    </container>
+        </div>
 
     
 </body>

@@ -27,6 +27,7 @@ class RegisterForm(forms.Form):
         address = forms.CharField(max_length=100)
         phone = forms.CharField(max_length=15)
 
+
         
 
 

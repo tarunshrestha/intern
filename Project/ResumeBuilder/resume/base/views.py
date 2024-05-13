@@ -36,6 +36,7 @@ def register_user(request):
             return redirect('register')
         except:
             user = User.objects.create(username = username, password=password)
+            
             # messages.error(request, "User Created.")
             # return redirect('register')
             # Authenticate
@@ -74,9 +75,17 @@ def login_user(request):
     return render(request, 'login.html', {'form': form})
 
 def logout_user(request):
-    request.session.pop('user_id',None)
+    if not request.user.is_authenticated: 
+        return render(request, 'index.html')
+    logout(request)
     return redirect('home')
 
 
-def Fill_profile(request):
-     redirect('home')
+def User_profile(request, user_id):
+    user = User.objects.get(pk=user_id)
+    # personal_info = User.objects.
+    return render(request, 'user_profile.html', context={'user':user, 'personal_info':personal_info})
+
+def Update_profile(request, user_id):
+    user = User.objects.get(pk=user_id)
+    return render(request, 'update_profile.html', context={'user':user})
