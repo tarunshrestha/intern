@@ -20,32 +20,32 @@
         <br>
         <form action="{% url 'register' %}" method="POST">
             {% csrf_token %}
-            {{form}}
-            <!-- <container>
+            <!-- {{form}} -->
+            <container>
                 <div class="mb-3">
                     <input type="text" class="form-control" name="firstname" placeholder="Firstname"><br>
                     <input type="text" class="form-control" name="lastname" placeholder="Lastname"><br>
                     <input type="text" class="form-control" name="username" placeholder="Username"><br>
-                    <input type="email" class="form-control" name="email" placeholder="Email"><br> -->
+                    <input type="email" class="form-control" name="email" placeholder="Email"><br>
 
-                    <!-- <input type="text" class="form-control" name="address" placeholder="Address"><br> -->
-                    <!-- <input type="text" class="form-control" name="phone_number" placeholder="Phone"><br> -->
-                    <!-- <input type="date" class="form-control" name="birth_date" placeholder="DateofBirth"> -->
-                    <!-- <div name="date" class="form-text">
+                    <input type="text" class="form-control" name="address" placeholder="Address"><br>
+                    <input type="text" class="form-control" name="phone_number" placeholder="Phone"><br>
+                    <input type="date" class="form-control" name="birth_date" placeholder="DateofBirth">
+                     <div name="date" class="form-text">
                         Enter your date of birth above.
-                        </div><br> -->
+                        </div><br>
 
-                    <!-- <div class="mb-3" >
+                    <div class="mb-3" >
                         <label for="disabledSelect" class="form-label">Gender:</label>
-                        <select id="disabledSelect" class="form-select" name="user_type">
+                        <select id="disabledSelect" class="form-select" name="gender">
                             <option value="Others">Others</option>
                             <option value="Male"  >Male</option>
                             <option value="Female">Female</option>
 
                         </select>
-                        </div> -->
+                        </div>
 
-<!--                     
+                    <!--
                     <div class="mb-3">
                         <label for="disabledSelect" class="form-label">:</label>
                         <select id="disabledSelect" class="form-select" name="faculty">
@@ -55,7 +55,7 @@
                         </select>
                         </div> -->
 
-                    <!-- <input type="password" name="password" class="form-control" aria-describedby="Password" placeholder="Password">
+                    <input type="password" name="password" class="form-control" aria-describedby="Password" placeholder="Password">
                     <div name="password" class="form-text">
                         Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
                         </div><br>
@@ -63,7 +63,7 @@
                         <input type="password" name="password2" class="form-control" aria-describedby="Password2" placeholder="Password2">
                         <div name="password2" class="form-text">
                             Type Your password again.
-                            </div><br> -->
+                            </div><br>
                         
                         
 

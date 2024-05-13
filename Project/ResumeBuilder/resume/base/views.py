@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import UserCreationForm
 from .forms import *
 from django.contrib import messages
 
@@ -11,23 +12,39 @@ def index(request):
 
 
 def register_user(request):
-    if request.session != None :
-        redirect ('login')
+    if request.user.is_authenticated:  # if user is logged in user gets thrown to home page.
+        return render(request, 'index.html')
+
     if request.method == 'POST':
-        form = RegisterForm(request.POST)
+        first_name = request.POST['firstname']
+        last_name = request.POST['lastname']
         username = request.POST['username'].lower()
-        try:
-            user = CustomUser.objects.get(username= username)
-        except:
-            messages.error(request,"User already exists.")
+        birth_date = request.POST['birth_date']
+        address = request.POST['address'] 
+        phone_number = request.POST['phone_number']
+        gender = request.POST['gender']
+        password = request.POST['password']
+        password2 = request.POST['password2']
+
+        if password !=password2:
+            messages.error(request, "Password doesnot match.")
             return redirect('register')
-        
-        if form.is_valid():
-            form.save()
-            return HttpResponse("Registered")
+            
+        try: 
+            user = User.objects.get(username= username)
+            messages.error(request,"User already Exists.")
+            return redirect('register')
+        except:
+            user = User.objects.create(username = username, password=password)
+            # messages.error(request, "User Created.")
+            # return redirect('register')
+            # Authenticate
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            messages.success(request, 'You are now registered')
+            return redirect('login')
     else:
-        form = RegisterForm()
-    return render(request, 'register.html',{'form':form})
+        return render(request, 'register.html')
 
 
 def login_user(request):
@@ -38,7 +55,7 @@ def login_user(request):
             password = request.POST.get('password')
 
             try:
-                user = CustomUser.objects.get(username=username)
+                user = User.objects.get(username=username)
             except:
                 messages.error(request, "User not found.")
                 return redirect("login")

@@ -5,7 +5,7 @@ from django_enumfield import enum
 from datetime import datetime, timedelta
 from django.utils import timezone 
 from dateutil.relativedelta import relativedelta
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractBaseUser
 
 # Create your models here.
 class Skill(models.Model):
@@ -20,23 +20,25 @@ class Language(models.Model):
     def __str__(self):
         return self.name 
 
-class CustomUser(models.Model):
+class CustomUser(AbstractBaseUser):
     first_name = models.CharField(max_length=50, null=True)
     last_name = models.CharField(max_length=50, null=True)
-    username = models.CharField(max_length=50)
+    username = models.CharField(max_length=50, unique=True)
     address = models.CharField(max_length=100, null=True)
     password = models.CharField(max_length=50, null=True)
-    
     gender = enum.EnumField(Gender_choice, default=Gender_choice.Others)
-    email = models.EmailField("Enter email address", default="")
-    phone = models.CharField(unique = True, max_length=12)
-    date_of_birth = models.DateField(default = None, null=True)
+    email = models.EmailField("Enter email address", unique=True) 
+    phone = models.CharField(unique=True, max_length=12)
+    date_of_birth = models.DateField(default=None, null=True)
     profile_picture = models.ImageField(null=True, upload_to='static/', blank=True)
     skills = models.ManyToManyField(Skill)
     languages = models.ManyToManyField(Language)
 
+    USERNAME_FIELD = 'email' 
+
     def __str__(self):
-        return self.username 
+        return self.username
+
 
     @property
     def get_age(self):
