@@ -7,24 +7,59 @@ from django.contrib import messages
 
 # Create your views here.
 def index(request):
-    return HttpResponse("Hello Testing.")
+    return render(request, 'index.html')
 
 
 def register_user(request):
-    if request.user.is_authenticated:  # if user is logged in user gets thrown to home page.
-        return redirect('home')
-
+    if request.session != None :
+        redirect ('login')
     if request.method == 'POST':
-        form = SignUpForm(request.POST)
+        form = RegisterForm(request.POST)
+        username = request.POST['username'].lower()
+        try:
+            user = CustomUser.objects.get(username= username)
+        except:
+            messages.error(request,"User already exists.")
+            return redirect('register')
+        
         if form.is_valid():
             form.save()
-            # Authenticate
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password1']
-            user = authenticate(username=username, password=password)
-            login(request, user)
-            messages.success(request, 'You are now registered')
-            return redirect('login')
+            return HttpResponse("Registered")
     else:
-        form = SignUpForm()
-    return render(request, 'register.html', {'form': form})
+        form = RegisterForm()
+    return render(request, 'register.html',{'form':form})
+
+
+def login_user(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+
+            try:
+                user = CustomUser.objects.get(username=username)
+            except:
+                messages.error(request, "User not found.")
+                return redirect("login")
+            else:
+
+                if user.password != password:
+                    messages.error(request, "Wrong Password.")
+                    return redirect("login")
+                
+                request.session['user_id'] = user.id
+                return render(request, 'index.html', context={'user':user})
+            
+            
+    else:
+        form = LoginForm()
+    return render(request, 'login.html', {'form': form})
+
+def logout_user(request):
+    request.session.pop('user_id',None)
+    return redirect('home')
+
+
+def Fill_profile(request):
+     redirect('home')

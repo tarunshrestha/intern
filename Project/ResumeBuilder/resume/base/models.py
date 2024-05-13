@@ -21,13 +21,16 @@ class Language(models.Model):
         return self.name 
 
 class CustomUser(models.Model):
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
+    first_name = models.CharField(max_length=50, null=True)
+    last_name = models.CharField(max_length=50, null=True)
     username = models.CharField(max_length=50)
+    address = models.CharField(max_length=100, null=True)
+    password = models.CharField(max_length=50, null=True)
+    
     gender = enum.EnumField(Gender_choice, default=Gender_choice.Others)
-    email = models.EmailField()
-    phone = models.IntegerField(unique = True)
-    date_of_birth = models.DateField()
+    email = models.EmailField("Enter email address", default="")
+    phone = models.CharField(unique = True, max_length=12)
+    date_of_birth = models.DateField(default = None, null=True)
     profile_picture = models.ImageField(null=True, upload_to='static/', blank=True)
     skills = models.ManyToManyField(Skill)
     languages = models.ManyToManyField(Language)
