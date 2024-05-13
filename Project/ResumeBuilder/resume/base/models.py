@@ -20,7 +20,7 @@ class Language(models.Model):
     def __str__(self):
         return self.name 
 
-class CustomUser(models.Model):
+class CustomUser(User):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='info')
     gender = enum.EnumField(Gender_choice, default=Gender_choice.Others)
     phone = models.IntegerField(unique = True)

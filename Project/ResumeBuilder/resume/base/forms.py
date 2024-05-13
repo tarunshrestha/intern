@@ -6,3 +6,5 @@ class SignUpForm(UserCreationForm):
     last_name = forms.CharField(max_length=50, label="")
     email = forms.EmailField(max_length=254, label="")
     gender = forms.ChoiceField(choices=[('Male',"Male"),('Female', "Female"), ('Others','Others')])
+
+class 
