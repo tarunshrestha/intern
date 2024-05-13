@@ -100,9 +100,10 @@ def logout_user(request):
 
 
 def User_profile(request, user_id):
-    users = User.objects.filter(pk=user_id)
-    personal_info = users.prefetch_related('custom_user_set').get(pk=user_id)
-    return render(request, 'user_profile.html', context={'user':users, "personal_info":personal_info})
+    users = User.objects.filter(pk=user_id).first()
+    personal_info = users.custom_user.first()
+    # personal_info = users.prefetch_related('custom_user').get(username=users.username)
+    return render(request, 'user_profile.html', context={'users':users, "personal_info":personal_info})
 
 def Update_profile(request, user_id):
     user = User.objects.get(pk=user_id)

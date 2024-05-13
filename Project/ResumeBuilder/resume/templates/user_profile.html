@@ -3,33 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{user.username}}</title>
+    <title>{{users.username |lower}}</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 
 </head>
 <body>
-    <h1>UserProfile</h1>
-    <a href="{% url 'update_profile' user.id %}">Update Profile</a>
+    
+    <div class="container">
+      <br>
+      <h1>UserProfile</h1>
+        <br>
 
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        <h1>{{user.username}}</h1>
-        <h2>{{personal_info.first_name}}</h2>
-        <p>Summary of my experience and skills.</p>
-        <h2>Education</h2>
-        <ul>
-          <li>Bachelor's Degree in Computer Science, XYZ University</li>
-          <li>Master's Degree in Data Science, ABC University</li>
-        </ul>
-        <h2>Work Experience</h2>
-        <ul>
-          <li>Software Engineer, ABC Company</li>
-          <li>Data Scientist, DEF Company</li>
-        </ul>
+      <div class="cv-section">
+          <h2>Personal Information</h2>
+          <div class="row">
+              <div class="col-md-6">
+                  <p><strong>Name:</strong> {{ users.username|capfirst }}</p>
+                  <p><strong>Email:</strong> {{ personal_info.email }}</p>
+                  <p><strong>Phone:</strong> {{ personal_info.phone }}</p>
+              </div>
+              <div class="col-md-6">
+                  <p><strong>Address:</strong> {{ personal_info.address|capfirst }}</p>
+                  <p><strong>Languages:</strong> 
+                    {% for lan in personal_info.languages.all %}
+                    {{ lan.name }},
+                    {% endfor %}
+                  </p>
+
+              </div>
+              
+          </div>
       </div>
+      <div class="cv-section">
+        <h2>Skills</h2>
+        {% for skill in personal_info.skills.all %}
+          <p><strong>{{skill.name}}</strong> </p>
+        {%endfor%}
     </div>
-</div>
+
+      <div class="cv-section">
+          <h2>Education</h2>
+          <p><strong>Degree:</strong> Bachelor of Science in Computer Science</p>
+          <p><strong>Institution:</strong> University of XYZ</p>
+          <p><strong>Year:</strong> 2020</p>
+      </div>
+      <div class="cv-section">
+          <h2>Experience</h2>
+          <p><strong>Position:</strong> Software Engineer</p>
+          <p><strong>Company:</strong> ABC Technologies</p>
+          <p><strong>Duration:</strong> 2018 - Present</p>
+          <p><strong>Responsibilities:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      </div>
+    
+      <a href="{% url 'update_profile' users.id %}">Update Profile</a>
+
+  </div>
 
 
 
