@@ -20,9 +20,12 @@ class Language(models.Model):
     def __str__(self):
         return self.name 
 
-class CustomUser(User):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='info')
+class CustomUser(models.Model):
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    username = models.CharField(max_length=50)
     gender = enum.EnumField(Gender_choice, default=Gender_choice.Others)
+    email = models.EmailField()
     phone = models.IntegerField(unique = True)
     date_of_birth = models.DateField()
     profile_picture = models.ImageField(null=True, upload_to='static/', blank=True)
@@ -47,13 +50,13 @@ class BaseModel(models.Model):
 
 
 class PersonalInformation(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='social_media')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='social_media')
     linkedin = models.URLField()
     github = models.URLField()
     descibe = models.TextField()
     
 class Education(models.Model):
-    user = models.ForeignKey(User, on_delete = models.CASCADE, related_name='educations')
+    user = models.ForeignKey(CustomUser, on_delete = models.CASCADE, related_name='educations')
     title =  enum.EnumField(Education_choice)
     faculty = models.CharField(max_length=50)
     institution_name = models.CharField(max_length=100)
@@ -66,7 +69,7 @@ class Education(models.Model):
 
 
 class Job(BaseModel):
-    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name='jobs')
+    user = models.ForeignKey(CustomUser,on_delete=models.CASCADE,related_name='jobs')
     position = models.CharField(max_length=50)
     company = models.CharField(max_length=50)
     startdate = models.DateField()
@@ -76,14 +79,14 @@ class Job(BaseModel):
         return self.name 
 
 class Project(BaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='project')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='project')
     description = models.TextField(max_length=255)
 
     def __str__(self):
         return self.name 
 
 class Reference(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reference')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='reference')
     reference_text = models.CharField(max_length=255)
 
     def __str__(self):
