@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from .forms import *
 from django.contrib import messages
+from faker import Faker
+import random
 
 
 # Create your views here.
@@ -23,7 +25,7 @@ def register_user(request):
         birth_date = request.POST['birth_date']
         address = request.POST['address'] 
         phone_number = request.POST['phone_number']
-        # gender_value = request.POST['gender']
+        gender_value = request.POST['gender']
         password = request.POST['password']
         password2 = request.POST['password2']
 
@@ -52,7 +54,7 @@ def register_user(request):
             last_name=last_name,
             address=address,
             phone=phone_number,
-            # gender=gender_value,
+            gender=int(gender_value),
             email = email,
             date_of_birth=birth_date,
         )
@@ -108,3 +110,32 @@ def User_profile(request, user_id):
 def Update_profile(request, user_id):
     user = User.objects.get(pk=user_id)
     return render(request, 'update_profile.html', context={'user':user})
+
+def Create_fake_profile(request):
+    faker = Faker()
+
+    for i in range(10):
+        first_name = faker.first_name()
+        last_name = faker.last_name()
+        username = 'fakename' + str(i)
+        email = faker.email()
+        birth_date = faker.date_of_birth()
+        address = faker.address ()
+        phone_number = faker.phone_number()
+        gender_value = random.randint(1, 3)
+        password = faker.password()
+
+        user = User.objects.create(username = username, password=password)
+        custom_user = CustomUser.objects.create(
+            user_id=user,
+            username = username,
+            password=password,
+            first_name=first_name, 
+            last_name=last_name,
+            address=address,
+            phone=phone_number,
+            gender=gender_value,
+            email = email,
+            date_of_birth=birth_date,
+        )
+    return HttpResponse("Fake Created")

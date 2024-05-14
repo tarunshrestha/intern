@@ -1,27 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-</head>
-<body>
+
+{% include 'base.html'%}
+
+
+{%block content%}
     {% if user.is_authenticated  %}
     
      <h1>Home, {{user.username}}</h1>
      <p>Lets make your CV by clicking below,</p>
-     <a href="{% url 'profile' user.id %}">click here.</a>
-     <a href="{% url 'logout'%}">logout</a>
-     <!-- <a href="{% url 'login' %}">login</a><br> -->
-
 
      {% else %}
     <h1>Home</h1>
-    <a href="{% url 'register' %}">Register</a>
-    <a href="{% url 'login' %}">login</a><br>
-
     {%endif%}
 
-    
-</body>
-</html>
+{% endblock %}

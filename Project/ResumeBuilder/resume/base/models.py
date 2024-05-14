@@ -29,7 +29,7 @@ class CustomUser(AbstractBaseUser):
     password = models.CharField(max_length=50, null=True)
     gender = enum.EnumField(Gender_choice, default=Gender_choice.Others)
     email = models.EmailField("Enter email address", unique=True) 
-    phone = models.CharField(unique=True, max_length=12)
+    phone = models.CharField(unique=True, max_length=20)
     date_of_birth = models.DateField(default=None, null=True)
     profile_picture = models.ImageField(null=True, upload_to='static/', blank=True)
     skills = models.ManyToManyField(Skill)
@@ -46,6 +46,10 @@ class CustomUser(AbstractBaseUser):
         today_date = timezone.now().date()
         age = relativedelta(today_date, self.date_of_birth).years
         return age
+    
+    @property 
+    def get_fullname(self):
+        return f"{self.first_name} {self.last_name}" #from django.db.models.functions import Concat
 
 
 class BaseModel(models.Model):

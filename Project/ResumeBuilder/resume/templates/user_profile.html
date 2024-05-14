@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{users.username |lower}}</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+{% include 'base.html'%}
 
-</head>
-<body>
-    
+    <title>{%block title%}{{users.username |lower}}{%endblock%}</title>
+
+    {%block content%}
     <div class="container">
       <br>
       <h1>UserProfile</h1>
@@ -18,7 +12,8 @@
           <h2>Personal Information</h2>
           <div class="row">
               <div class="col-md-6">
-                  <p><strong>Name:</strong> {{ users.username|capfirst }}</p>
+                  <p><strong>Username:</strong> {{ users.username|capfirst }}</p>
+                  <p><strong>Full Name:</strong> {{ personal_info.first_name|capfirst }} {{ personal_info.last_name|capfirst }}</p>
                   <p><strong>Email:</strong> {{ personal_info.email }}</p>
                   <p><strong>Phone:</strong> {{ personal_info.phone }}</p>
               </div>
@@ -58,8 +53,4 @@
       <a href="{% url 'update_profile' users.id %}">Update Profile</a>
 
   </div>
-
-
-
-</body>
-</html>
+{%endblock%}
