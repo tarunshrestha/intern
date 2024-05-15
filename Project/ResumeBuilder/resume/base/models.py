@@ -5,7 +5,7 @@ from django_enumfield import enum
 from datetime import datetime, timedelta
 from django.utils import timezone 
 from dateutil.relativedelta import relativedelta
-from django.contrib.auth.models import User, AbstractBaseUser
+from django.contrib.auth.models import AbstractUser, Group, Permission, BaseUserManager
 
 # Create your models here.
 class Skill(models.Model):
@@ -20,22 +20,46 @@ class Language(models.Model):
     def __str__(self):
         return self.name 
 
-class CustomUser(AbstractBaseUser):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='custom_user', default=0)
+# class UserManager(BaseUserManager):
+#     def create_user(self, username, person, password=None):
+#         if not username:
+#             raise ValueError('User must have a valid username')
+
+#         user = self.model(username=username, created=datetime.now(), must_change_password=True, deleted=False, person=person)
+
+#         user.set_password(password)
+#         user.save(using=self._db)
+#         return user
+
+class CustomUser(AbstractUser):
+    # user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     first_name = models.CharField(max_length=50, null=True)
     last_name = models.CharField(max_length=50, null=True)
-    username = models.CharField(max_length=50, unique=True)
+    username = models.CharField(max_length=50, unique=True, blank=True, null=True)
     address = models.CharField(max_length=100, null=True)
-    password = models.CharField(max_length=50, null=True)
+    # password = models.CharField(max_length=50, null=True)
     gender = enum.EnumField(Gender_choice, default=Gender_choice.Others)
-    email = models.EmailField("Enter email address", unique=True) 
+    email = models.EmailField(unique=True) 
     phone = models.CharField(unique=True, max_length=20)
     date_of_birth = models.DateField(default=None, null=True)
     profile_picture = models.ImageField(null=True, upload_to='static/', blank=True)
     skills = models.ManyToManyField(Skill)
     languages = models.ManyToManyField(Language)
 
-    USERNAME_FIELD = 'email' 
+    groups = models.ManyToManyField(
+        Group,
+        related_name='customuser_set',  
+        blank=True,
+        help_text=('The groups this user belongs to. A user will get all permissions granted to each of their groups.'),
+        related_query_name='customuser'
+    )
+    user_permissions = models.ManyToManyField(
+        Permission,
+        related_name='customuser_set',  
+        blank=True,
+        help_text=('Specific permissions for this user.'),
+        related_query_name='customuser'
+    )
 
     def __str__(self):
         return self.username
@@ -61,9 +85,9 @@ class BaseModel(models.Model):
 
 class PersonalInformation(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='social_media')
-    linkedin = models.URLField()
-    github = models.URLField()
-    descibe = models.TextField()
+    linkedin = models.URLField(null=True)
+    github = models.URLField(null=True)
+    summary = models.TextField(null=True)
     
 class Education(models.Model):
     user = models.ForeignKey(CustomUser, on_delete = models.CASCADE, related_name='educations')

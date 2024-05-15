@@ -1,6 +1,6 @@
-{% include 'base.html'%}
+{% extends 'base.html'%}
 
-    <title>{%block title%}{{users.username |lower}}{%endblock%}</title>
+    <title>{%block title%}profile{%endblock%}</title>
 
     {%block content%}
     <div class="container">
@@ -13,14 +13,14 @@
           <div class="row">
               <div class="col-md-6">
                   <p><strong>Username:</strong> {{ users.username|capfirst }}</p>
-                  <p><strong>Full Name:</strong> {{ personal_info.first_name|capfirst }} {{ personal_info.last_name|capfirst }}</p>
-                  <p><strong>Email:</strong> {{ personal_info.email }}</p>
-                  <p><strong>Phone:</strong> {{ personal_info.phone }}</p>
+                  <p><strong>Full Name:</strong> {{ users.first_name|capfirst }} {{ users.last_name|capfirst }}</p>
+                  <p><strong>Email:</strong> {{ users.email }}</p>
+                  <p><strong>Phone:</strong> {{ users.phone }}</p>
               </div>
               <div class="col-md-6">
-                  <p><strong>Address:</strong> {{ personal_info.address|capfirst }}</p>
+                  <p><strong>Address:</strong> {{ users.address|capfirst }}</p>
                   <p><strong>Languages:</strong> 
-                    {% for lan in personal_info.languages.all %}
+                    {% for lan in users.languages.all %}
                     {{ lan.name }},
                     {% endfor %}
                   </p>
@@ -31,7 +31,7 @@
       </div>
       <div class="cv-section">
         <h2>Skills</h2>
-        {% for skill in personal_info.skills.all %}
+        {% for skill in users.skills.all %}
           <p><strong>{{skill.name}}</strong> </p>
         {%endfor%}
     </div>

@@ -1,11 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update</title>
-</head>
-<body>
-    <h1>Update Profile</h1>
-</body>
-</html>
+{% extends 'base.html'%}
+
+    <title>{%block title%}Update{%endblock%}</title>
+<br>
+    {%block content%}
+    <h1 >Update Profile</h1>
+    <br>
+    <h3>Personal Information:</h3>
+    <div class="container">
+        {{link_form.as_p}}
+    </div>
+<br>
+    <h3>Education</h3>
+    <div class="container">
+        {{education_form.as_p}}
+    </div>
+{%endblock%}
