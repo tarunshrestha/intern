@@ -73,7 +73,7 @@ class CustomUser(AbstractUser):
     
     @property 
     def get_fullname(self):
-        return f"{self.first_name} {self.last_name}" #from django.db.models.functions import Concat
+        return f"{self.first_name} {self.last_name}" #from django.db.models.functions import Concat 
 
 
 class BaseModel(models.Model):
@@ -88,6 +88,9 @@ class PersonalInformation(models.Model):
     linkedin = models.URLField(null=True)
     github = models.URLField(null=True)
     summary = models.TextField(null=True)
+
+    def __str__(self):
+        return self.user.username
     
 class Education(models.Model):
     user = models.ForeignKey(CustomUser, on_delete = models.CASCADE, related_name='educations')

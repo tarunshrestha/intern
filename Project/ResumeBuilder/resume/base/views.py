@@ -68,13 +68,63 @@ def Update_profile(request, user_id):
     project_form = ProjectForm()
     ref_form = ReferenceForm()
     return render(request, 'update_profile.html', context={
-        'user':user, 
+        'users':user, 
         'link_form':link_form, 
         'education_form':education_form, 
         'job_form':job_form,
         'project_form':project_form,
         'ref_form':ref_form
         })
+
+
+def update_info(request, user_id):
+    if request.method == "POST":
+        user = CustomUser.objects.get(pk=user_id)
+        linkedin = request.POST['linkedin']
+        github = request.POST['github']
+        summary = request.POST['summary']
+        if user.social_media.exists():
+            user.social_media.create_or_update(linkedin = linkedin, github =github, summary=summary)
+            messages.success(request, "Personal information updated successfully.")
+        else:
+            user.social_media.create(linkedin = linkedin, github =github, summary=summary)
+            messages.success(request, "Personal information created.") 
+        return redirect('update_profile', user_id=user_id)
+
+        # user = CustomUser.objects.get(pk=user_id)
+        # links = PersonalInformation.objects.create(user=user, )
+
+
+def update_education(request, user_id):
+    if request.method == "POST":
+        user = CustomUser.objects.get(pk=user_id)
+        user.social_media.get_or_create().first()
+        form = EducationForm(request.POST, request.FILES, instance=user)
+        if form.is_valid(): 
+            form.save()
+            messages.success(request, "Education updated successfully.")
+            return redirect('update_profile', user_id=user_id)
+        else:
+            messages.error(request, "Education form not updated.") 
+            return redirect('update_profile', user_id=user_id)
+
+
+def update_job(request, user_id):
+    user = CustomUser.objects.get(pk=user_id)
+
+    return redirect('update_profile')
+
+def update_project(request, user_id):
+    user = CustomUser.objects.get(pk=user_id)
+
+    return redirect('update_profile')
+
+def update_ef(request, user_id):
+    user = CustomUser.objects.get(pk=user_id)
+
+    return redirect('update_profile')
+
+
 
 def Create_fake_profile(request):
     faker = Faker()
