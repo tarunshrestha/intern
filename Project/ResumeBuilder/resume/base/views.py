@@ -64,7 +64,17 @@ def Update_profile(request, user_id):
     user = CustomUser.objects.get(pk=user_id)
     link_form = PersonalInformationForm()
     education_form = EducationForm() 
-    return render(request, 'update_profile.html', context={'user':user, 'link_form':link_form, 'education_form':education_form})
+    job_form = JobForm()
+    project_form = ProjectForm()
+    ref_form = ReferenceForm()
+    return render(request, 'update_profile.html', context={
+        'user':user, 
+        'link_form':link_form, 
+        'education_form':education_form, 
+        'job_form':job_form,
+        'project_form':project_form,
+        'ref_form':ref_form
+        })
 
 def Create_fake_profile(request):
     faker = Faker()
