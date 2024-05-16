@@ -38,9 +38,14 @@
 
       <div class="cv-section">
           <h2>Education</h2>
-          <p><strong>Degree:</strong> Bachelor of Science in Computer Science</p>
-          <p><strong>Institution:</strong> University of XYZ</p>
-          <p><strong>Year:</strong> 2020</p>
+          {%for edu in users.education.all %}
+          <p><strong>Degree:</strong> {{ edu.faculty }}</p>
+          <p><strong>Institution:</strong> {{ edu.institution_name }}</p>
+          <p><strong>Year:</strong> {{edu.start_date}}</p>
+          <p><strong>EndYear:</strong> {{edu.end_date}}</p>
+          <p><strong>Score:</strong> {{edu.score}}</p>
+          {% endfor %}
+
       </div>
       <div class="cv-section">
           <h2>Experience</h2>

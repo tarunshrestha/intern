@@ -10,8 +10,10 @@ urlpatterns = [
     path('update/<int:user_id>/', views.Update_profile, name='update_profile'),
     path('update_info/<int:user_id>/', views.update_info, name='update_info'),
     path('update_education/<int:user_id>/', views.update_education, name='update_education'),
+    path('update_job/<int:user_id>/', views.update_job, name='update_job'),
+    path('update_project/<int:user_id>/', views.update_project, name='update_project'),
+    path('update_ref/<int:user_id>/', views.update_ref, name='update_ref'),
 
-    
     # path('fake', views.Create_fake_profile),
 
 ]

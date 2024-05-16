@@ -49,7 +49,7 @@
     </h2>
     <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
       <div class="accordion-body">
-        <form action="#" method="POST">
+        <form action="{% url 'update_job' users.id%}" method="POST">
           {% csrf_token %}
             {{job_form.as_p}}
 
@@ -67,7 +67,7 @@
     </h2>
     <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
       <div class="accordion-body">
-        <form action="#" method="POST">
+        <form action="{% url 'update_project' users.id%}" method="POST">
           {% csrf_token %}
             {{project_form.as_p}}
 
@@ -86,7 +86,7 @@
     </h2>
     <div id="collapseFive" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
       <div class="accordion-body">
-        <form action="#" method="POST">
+        <form action="{% url 'update_ref' users.id%}" method="POST">
           {% csrf_token %}
             {{ref_form.as_p}}
 

@@ -102,18 +102,18 @@ class Education(models.Model):
     score =models.FloatField()
 
     def __str__(self):
-        return self.title
+        return self.institution_name
 
 
 class Job(BaseModel):
     user = models.ForeignKey(CustomUser,on_delete=models.CASCADE,related_name='jobs')
     position = models.CharField(max_length=50)
     company = models.CharField(max_length=50)
-    start_date = models.DateField()
-    end_date = models.DateField()
+    start_date = models.DateField(null=True)
+    end_date = models.DateField(null=True)
     
     def __str__(self):
-        return self.name 
+        return self.company 
 
 class Project(BaseModel):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='project')

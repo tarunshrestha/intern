@@ -15,6 +15,8 @@ def index(request):
 
 
 def register_user(request):
+    if request.user.is_authenticated:
+        return redirect('home')
     if request.method == 'POST':
         form = CustomUserForm(request.POST, request.FILES)
         if form.is_valid():
@@ -32,6 +34,8 @@ def register_user(request):
 
 
 def login_user(request):
+    if request.user.is_authenticated:
+        return redirect('home')
     if request.method == 'POST':
         form = AuthenticationForm(request=request, data=request.POST)
         if form.is_valid():
@@ -57,10 +61,15 @@ def logout_user(request):
 
 
 def User_profile(request, user_id):
+    if not request.user.is_authenticated:
+        return redirect('home')
+
     users = CustomUser.objects.filter(pk=user_id).first()
     return render(request, 'user_profile.html', context={'users':users})
 
 def Update_profile(request, user_id):
+    if not request.user.is_authenticated:
+        return redirect('home')
     user = CustomUser.objects.get(pk=user_id)
     link_form = PersonalInformationForm()
     education_form = EducationForm() 
@@ -84,7 +93,7 @@ def update_info(request, user_id):
         github = request.POST['github']
         summary = request.POST['summary']
         if user.social_media.exists():
-            user.social_media.create_or_update(linkedin = linkedin, github =github, summary=summary)
+            user.social_media.update(linkedin = linkedin, github =github, summary=summary)
             messages.success(request, "Personal information updated successfully.")
         else:
             user.social_media.create(linkedin = linkedin, github =github, summary=summary)
@@ -98,31 +107,65 @@ def update_info(request, user_id):
 def update_education(request, user_id):
     if request.method == "POST":
         user = CustomUser.objects.get(pk=user_id)
-        user.social_media.get_or_create().first()
-        form = EducationForm(request.POST, request.FILES, instance=user)
-        if form.is_valid(): 
-            form.save()
-            messages.success(request, "Education updated successfully.")
-            return redirect('update_profile', user_id=user_id)
-        else:
-            messages.error(request, "Education form not updated.") 
-            return redirect('update_profile', user_id=user_id)
+        title = request.POST['title']
+        faculty = request.POST['faculty']
+        institution_name = request.POST['institution_name']
+        start_date = request.POST['start_date']
+        end_date = request.POST['end_date']
+        score = request.POST['score']
+
+        user.educations.get_or_create(
+            title=int(title),
+            faculty=faculty,
+            institution_name=institution_name,
+            start_date=start_date,
+            end_date=end_date,
+            score=score
+               )
+        messages.success(request, "Education updated successfully.")
+        return redirect('update_profile', user_id=user_id)
+
 
 
 def update_job(request, user_id):
-    user = CustomUser.objects.get(pk=user_id)
+    if request.method == "POST":
+        user = CustomUser.objects.get(pk=user_id)
+        position = request.POST['position']
+        company = request.POST['company']
+        start_date = request.POST['start_date']
+        end_date = request.POST['end_date']
+        form = user.jobs.get_or_create(company = company)
+        form.update(
+            position=position,
+            start_date=start_date,
+            end_date=end_date
+               )
+        messages.success(request, "Jobs updated successfully.")
+        return redirect('update_profile', user_id=user_id)
+
 
     return redirect('update_profile')
 
 def update_project(request, user_id):
-    user = CustomUser.objects.get(pk=user_id)
+    if request.method == "POST":
+        user = CustomUser.objects.get(pk=user_id)
+        name = request.POST['name']
+        description = request.POST['description']
+        form = user.project.get_or_create(name = name)
+        form.update(description=description)
+        messages.success(request, "Projects updated successfully.")
+        return redirect('update_profile', user_id=user_id)
 
     return redirect('update_profile')
 
-def update_ef(request, user_id):
-    user = CustomUser.objects.get(pk=user_id)
-
-    return redirect('update_profile')
+def update_ref(request, user_id):
+    if request.method == "POST":
+        user = CustomUser.objects.get(pk=user_id)
+        reference_text = request.POST['reference_text']
+        if user.reference.exists():
+            user.reference.first().delete()
+        user.reference.get_or_create(reference_text=reference_text)
+        return redirect('update_profile', user_id=user_id)
 
 
 
