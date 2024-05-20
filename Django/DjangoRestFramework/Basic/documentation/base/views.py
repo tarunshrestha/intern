@@ -161,3 +161,26 @@ class TodoView(APIView):
                     'message':"Success data",
                     'data':serializer.data
                         })
+
+    def delete(self, request):
+        try:
+            data = request.data
+            if not data.get('url_id'):
+                return Response({
+                    'status': False,
+                    'message': "url_id is required.",
+                    'data': {}
+                })
+        except Exception as e:
+            print(e)
+            return Response({
+                'status': False,
+                'message': "Url invalid or something went wrong."
+            })
+        else:
+            obj = Todo.objects.get(url_id=data.get('url_id'))
+            obj.delete()
+            return Response({
+                'status': True,
+                'message': "Todo deleted successfully"
+            })
