@@ -43,6 +43,17 @@ def get_todo(request):
         'data': serializer.data
     })
 
+@api_view()
+def get_individual(request):
+    id = request.GET.get('id')
+    todo = Todo.objects.get(url_id = id)
+    serializer = TodoSerializer(todo)
+    return Response({
+        'status':True,
+        'message':'Todo Fetch',
+        'data': serializer.data
+    })
+
 
 @api_view(['POST'])
 def post_todo(request):
@@ -97,14 +108,21 @@ def patch_todo(request):
                 'message':"Success data",
                 'data':serializer.data
                     })
+        
+
 
 
 # --------------------------------------------- Class Based ------------------------------------------------------------------------------------------
 class TodoView(APIView):
 
     def get(self, request):
-        todo = Todo.objects.all()
-        serializer = TodoSerializer(todo, many=True)
+        id = request.GET.get('id')
+        if id != None:
+            todo = Todo.objects.get(url_id = id)
+            serializer = TodoSerializer(todo)
+        else:
+            todo = Todo.objects.all()
+            serializer = TodoSerializer(todo, many=True)
         return Response({
             'status':True,
             'message':'Todo Fetch',
@@ -138,8 +156,9 @@ class TodoView(APIView):
     
     def patch(self, request):
         try:
+            id = request.GET.get('id')
             data = request.data
-            if not data.get('url_id'):
+            if id == None:
                 return Response({
                     'status':False,
                     'message':"url_id is required.",
@@ -152,7 +171,7 @@ class TodoView(APIView):
                 'message':"Invalid url_id."    
                 })
         else:
-            obj = Todo.objects.get(url_id = data.get('url_id'))
+            obj = Todo.objects.get(url_id = id)
             serializer = TodoSerializer(obj, data=data, partial = True)
             if serializer.is_valid():
                 serializer.save()
@@ -164,11 +183,12 @@ class TodoView(APIView):
 
     def delete(self, request):
         try:
-            data = request.data
-            if not data.get('url_id'):
+            id = request.GET.get('id')
+            data = Todo.objects.get(url_id = id)
+            if not data:
                 return Response({
                     'status': False,
-                    'message': "url_id is required.",
+                    'message': "Id not found.",
                     'data': {}
                 })
         except Exception as e:
@@ -178,8 +198,7 @@ class TodoView(APIView):
                 'message': "Url invalid or something went wrong."
             })
         else:
-            obj = Todo.objects.get(url_id=data.get('url_id'))
-            obj.delete()
+            data.delete()
             return Response({
                 'status': True,
                 'message': "Todo deleted successfully"
