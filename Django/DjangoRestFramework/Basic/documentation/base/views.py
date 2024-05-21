@@ -125,7 +125,7 @@ class TodoView(APIView):
             serializer = TodoSerializer(todo, many=True)
         return Response({
             'status':True,
-            'message':'Todo Fetch',
+            'message':'All Todos.',
             'data': serializer.data
         })
     
@@ -138,21 +138,21 @@ class TodoView(APIView):
                 serializer.save()
                 return Response({
                     'status':True,
-                    'message':"Success data",
+                    'message':"Successfull todo added.",
                     'data':serializer.data
                         })
 
             return Response({
             'status':False,
-            'message':"invalid data",
+            'message':"Cannot add todo.",
             'data':serializer.errors
                 })
         except Exception as e:
             print(e)
-        return Response({
-            'status':False,
-            'message':"Something went wrong"    
-            })
+            return Response({
+                'status':False,
+                'message':"Something went wrong",    
+                })
     
     def patch(self, request):
         try:
@@ -177,7 +177,7 @@ class TodoView(APIView):
                 serializer.save()
                 return Response({
                     'status':True,
-                    'message':"Success data",
+                    'message':"Success data updated.",
                     'data':serializer.data
                         })
 
@@ -201,5 +201,5 @@ class TodoView(APIView):
             data.delete()
             return Response({
                 'status': True,
-                'message': "Todo deleted successfully"
+                'message': "Todo deleted successfully."
             })
