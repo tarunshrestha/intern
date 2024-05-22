@@ -3,6 +3,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializer import *
 from .models import *
+from .email import Email
+
+email = Email()
 
 # Create your views here.
 @api_view(['GET', 'POST', "PATCH"])
@@ -110,9 +113,66 @@ def patch_todo(request):
                     })
         
 
+# -------------------------------------------- Class Based User --------------------------
+
+class RegisterAPI(APIView):
+    def post(self, request):
+        try:
+            data = request.data
+            serializer = UserSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                email.send_otp(serializer.data['email'])
+                return Response({
+                    'status':200,
+                    'message': "User Registered Successfully.",
+                    'data': serializer.data
+                })
+            return Response({
+                'status':400,
+                'message':"Something went wrong."
+                })
+        except Exception as e:
+            print(e)
+            return Response({
+                'status':400,
+                'message':"Something went wrong"    
+                })
+        
+class VerifyOTP(APIView):
+    def post(self,request):
+        try:
+            data= request.data
+            serializer = VerifyAccountSerializer(data=data)
+            if serializer.is_valid():
+                email = serializer.data['email']
+                otp = serializer.data['otp']
+                user = CustomUser.objects.filter(email=email)
+                if not user.exists() or user[0].otp != otp:
+                    return Response({
+                    'status':400,
+                    'message': "User email or Otp not matched."
+                        })
+                user = user.first()
+                user.is_verified = True
+                user.save()
+                return Response({
+                    'status':200,
+                    'message': "User Verified Successfully.",
+                    'data': serializer.data
+                })
+
+        except Exception as e:
+            print(e)
+            return Response({
+                'status':400,
+                'message':"Something went wrong"    
+                })
+        
+            
 
 
-# --------------------------------------------- Class Based ------------------------------------------------------------------------------------------
+# --------------------------------------------- Class Based Todo------------------------------------------------------------------------------------------
 class TodoView(APIView):
 
     def get(self, request):
@@ -121,6 +181,7 @@ class TodoView(APIView):
             todo = Todo.objects.get(url_id = id)
             serializer = TodoSerializer(todo)
         else:
+            #
             todo = Todo.objects.all()
             serializer = TodoSerializer(todo, many=True)
         return Response({

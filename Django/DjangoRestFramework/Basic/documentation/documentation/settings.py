@@ -26,6 +26,7 @@ SECRET_KEY = 'django-insecure-#y72n%whnaxswt+x0f3pfm35_w!)2g+w2*enz(=cgwy+l#o=y@
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+AUTH_USER_MODEL = 'base.CustomUser'
 
 CORS_ORIGIN_ALLOW_ALL=True
 CORS_ALLOW_ALL_ORIGINS = True

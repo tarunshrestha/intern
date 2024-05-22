@@ -9,5 +9,8 @@ urlpatterns = [
     path('patch_todo/', patch_todo, name='patch_todo'),
     path('todo/', TodoView.as_view()),
 
+    path('register', RegisterAPI.as_view()),
+    path('verify', VerifyOTP.as_view())
+
 
 ]
