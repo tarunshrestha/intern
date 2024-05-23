@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.template.defaultfilters import slugify
 from django.contrib.auth import authenticate
+from rest_framework.response import Response
+from django.contrib.auth.hashers import make_password  
 from .models import *
 import re
 
@@ -34,26 +36,43 @@ class TodoSerializer(serializers.ModelSerializer):
     #     return obj.title + ' ' + str(obj.is_done)
 
 class UserSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = CustomUser
         # fields = "__all__"
         fields = ['id', 'password', 'date_joined', 'first_name', 'last_name', 'username', 'address', 'phone', 'date_of_birth', 'profile_picture', 'gender', 'email', 'is_verified', 'otp']
         # exculde = ['is_superuser', 'is_staff', 'user_permissions',]
 
+    def validate(self, data):
+        data['gender'] = int(data['gender']) 
+        # data['password'] = make_password(data['password'])
+        return data
 
-class LoginSerializer(serializers.ModelSerializer):
-    class Meta:
-        models = CustomUser 
-        fields = ['email', 'password']
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()
+    # class Meta:
+    #     model = CustomUser
+    #     fields = ['id', 'email', 'password']
+
 
     def validate(self, data):
-        email = data.get('email', None)
-        password = data.get('password', None)
+        email = data.get('email')
+        password = data.get('password')
+        # password = make_password(password)
+        if not CustomUser.objects.filter(email = email).exists():
+            raise serializers.ValidationError('Email doesnot exists.')
+        user = CustomUser.objects.get(email = email)
+        if user.password != password:
+            raise serializers.ValidationError('Password not matched.')
         if email and password:
             user = authenticate(email=email, password=password)
-            if user:
-                data['user'] = user
-            data
+                                    
+            # user = authenticate(request=self.context.get('request'),
+            #                     email=email, password=password)
+
+        data['user'] = user     
+        return data
 
 class VerifyAccountSerializer(serializers.Serializer):
     email = serializers.EmailField()

@@ -54,7 +54,7 @@ class BaseModel(models.Model):
 class Todo(BaseModel):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='todo')
     title = models.CharField(max_length=100)
-    description = models.TextField(max_length=255)
+    description = models.TextField()
     is_done = models.BooleanField(default=False)
 
     def __str__(self):
