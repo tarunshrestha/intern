@@ -138,7 +138,22 @@ class UserAPI(APIView):
             'message':'User id is incorrect.',
         })
 
+class UserLogout(APIView):
+    permission_classes=[AllowAny]
 
+    def post(self, request):
+        if request.user.is_authenticated:
+            request.user.auth_token.delete()
+            Response({
+                'status': 200,
+                'message': "User logged out successfully."
+            })
+
+        else:
+            Response({
+                'status': 400,
+                'message': "User is not logged in."
+            })
 
 class LoginUser(APIView):
     # authentication_classes = [SessionAuthentication, BasicAuthentication]
@@ -154,21 +169,20 @@ class LoginUser(APIView):
                 tokens = RefreshToken.for_user(user)
                 # return Response({'access': str(tokens.access_token), 'refresh': str(tokens)})
                 return Response({
-                'status':200, 
                 'message': "User Logged in.",
                 'token': {'access': str(tokens.access_token), 'refresh': str(tokens)},
                 'data': serializer.data
-                })
-            return Response({
-                'status':400,
-                'message':"Form is invalid.",
-                'error': serializer.errors   
-                })
+                }, status=status.HTTP_202_ACCEPTED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # return Response({
+            #     'status':400,
+            #     'message':"Form is invalid.",
+            #     'error': serializer.errors   
+            #     })
         except Exception as e:
             print("------------------------------------------------------------------------")
             print(e)
             return Response({
-                'status':400,
                 'message':"Something went wrong"
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -238,18 +252,28 @@ class TodoView(APIView):
         #     return Response({'detail': 'You need to registered or logged in.'})
 
         id = request.GET.get('id')
-        if id != None:
-            todo = Todo.objects.get(url_id = id)
-            serializer = TodoSerializer(todo)
-        else:
-            #
-            todo = Todo.objects.all()
+        todo_id = request.GET.get('tid') 
+        if id:
+            todo = CustomUser.objects.get(id=id).todo.all()
             serializer = TodoSerializer(todo, many=True)
-        return Response({
-            'status':True,
-            'message':'All Todos.',
-            'data': serializer.data
-        })
+            if todo_id:
+                todo = Todo.objects.get(url_id = todo_id)
+                serializer = TodoSerializer(todo)
+                return Response({
+                    'status':200,
+                    'message':'Todo details got successfully.',
+                    'data': serializer.data
+                        })
+            return Response({
+                    'status':200,
+                    'message':'All todo received.',
+                    'data': serializer.data
+                        })
+        else:
+            return Response({
+                'status':False,
+                'message':'Something went wrong.',
+            })
     
     def post(self, request):
         try:

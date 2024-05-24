@@ -61,16 +61,16 @@ class LoginSerializer(serializers.Serializer):
         password = data.get('password')
         # password = make_password(password)
         if not CustomUser.objects.filter(email = email).exists():
-            raise serializers.ValidationError('Email doesnot exists.')
+            raise serializers.ValidationError({'email':'Email doesnot exists.'})
         user = CustomUser.objects.get(email = email)
         if user.password != password:
-            raise serializers.ValidationError('Password not matched.')
+            raise serializers.ValidationError({'password':'Password not matched.'})
         if email and password:
             user = authenticate(email=email, password=password)
                                     
             # user = authenticate(request=self.context.get('request'),
             #                     email=email, password=password)
-
+        data['email'] = email.lower()
         data['user'] = user     
         return data
 
