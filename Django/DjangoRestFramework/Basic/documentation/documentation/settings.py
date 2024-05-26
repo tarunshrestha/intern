@@ -28,6 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 AUTH_USER_MODEL = 'base.CustomUser'
+APPEND_SLASH = False
 
 CORS_ORIGIN_ALLOW_ALL=True
 CORS_ALLOW_ALL_ORIGINS = True
@@ -47,7 +48,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django_extensions',
     'corsheaders',
-    'django_cron',
+    # 'django_cron',
+    'django_crontab',
     # 'background_task',
 ]
 
@@ -149,11 +151,15 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=15),
-    "REFRESH_TOKEN_LIFETIME": timedelta(seconds=30),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=5),
     "ALGORITHM": "HS256",
 }
 
-CORN_CLASS = [
-    'base.cron.UserValidationCheck',
+CRONJOBS = [
+    ('*/1 * * * *', 'base.cron.UserValidationCheck'),
+    ('*/1 * * * *', 'base.cron.test'),
 ]
+# CORN_CLASS = [
+#     'base.cron.UserValidationCheck',
+# ]

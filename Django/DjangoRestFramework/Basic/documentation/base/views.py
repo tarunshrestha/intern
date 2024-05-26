@@ -144,13 +144,13 @@ class UserLogout(APIView):
     def post(self, request):
         if request.user.is_authenticated:
             request.user.auth_token.delete()
-            Response({
+            return Response({
                 'status': 200,
                 'message': "User logged out successfully."
             })
 
         else:
-            Response({
+            return Response({
                 'status': 400,
                 'message': "User is not logged in."
             })
@@ -277,8 +277,8 @@ class TodoView(APIView):
     
     def post(self, request):
         try:
+            id = request.GET.get('id')
             data = request.data
-            print(data)
             serializer = TodoSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
@@ -296,7 +296,7 @@ class TodoView(APIView):
         except Exception as e:
             print(e)
             return Response({
-                'status':False,
+                'status':status.HTTP_500_INTERNAL_SERVER_ERROR,
                 'message':"Something went wrong",    
                 })
     

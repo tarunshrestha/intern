@@ -14,7 +14,7 @@ urlpatterns = [
     path('verify/', VerifyOTP.as_view()),
     path('login/', LoginUser.as_view()),
     path('userinfo/', UserAPI.as_view()),
-    path('logout/', UserLogout.as_view()),
+    path('logout', UserLogout.as_view()),
     
 
     #Token
