@@ -130,8 +130,12 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
-
-STATIC_URL = 'static/'
+import os
+# STATIC_ROOT = '/mnt/824EB9CC4EB9B96D/RealSoftHR/intern/Django/DjangoRestFramework/Basic/documentation/static'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -163,3 +167,5 @@ CRONJOBS = [
 # CORN_CLASS = [
 #     'base.cron.UserValidationCheck',
 # ]
+
+

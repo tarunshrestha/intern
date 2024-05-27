@@ -36,7 +36,7 @@ class TodoSerializer(serializers.ModelSerializer):
     #     return obj.title + ' ' + str(obj.is_done)
 
 class UserSerializer(serializers.ModelSerializer):
-
+    # tryEmail = serializers.CharField(max_length = 255)
     class Meta:
         model = CustomUser
         # fields = "__all__"
@@ -44,9 +44,25 @@ class UserSerializer(serializers.ModelSerializer):
         # exculde = ['is_superuser', 'is_staff', 'user_permissions',]
 
     def validate(self, data):
+        print(data['gender'])
         data['gender'] = int(data['gender']) 
+        # data['profile_picture'] = '/mnt/824EB9CC4EB9B96D/RealSoftHR/intern/Django/DjangoRestFramework/Basic/documentation' + data['profile_picture']
+        # if data['username'].lower() == 'amar':
+        #     raise serializers.ValidationError({'username':'Amar is blocked.'})
         # data['password'] = make_password(data['password'])
         return data
+    
+    # def get_tryEmail(self, data):
+    #     if data:
+    #         import ipdb; ipdb.set_trace()
+    #     if '@' not in data['email'] and '.' not in data['email']:
+    #         raise serializers.ValidationError({'email':'Hello not there.'})
+    #     if "#" in data['email']:
+    #         raise serializers.ValidationError({'email':"Hello there"})
+    #     return data
+    
+
+
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()

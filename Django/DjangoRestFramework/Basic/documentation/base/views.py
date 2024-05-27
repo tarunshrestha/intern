@@ -137,6 +137,24 @@ class UserAPI(APIView):
             'status':400,
             'message':'User id is incorrect.',
         })
+    
+    def patch(self, request):
+        id = request.GET.get('id')
+        if not CustomUser.objects.filter(id = id).exists():
+            Response({'message: "User id invalid.'}, 
+                     status=status.HTTP_404_NOT_FOUND)
+        data = request.data
+        user = CustomUser.objects.get(id = id)
+        serializer = UserSerializer(user, data=data, partial = True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message':"User updated successfully",
+                "data": serializer.data
+            }, status=status.HTTP_202_ACCEPTED)
+        return Response({
+                'message':serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
 
 class UserLogout(APIView):
     permission_classes=[AllowAny]

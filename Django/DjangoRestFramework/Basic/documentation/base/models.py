@@ -15,7 +15,7 @@ class CustomUser(AbstractUser):
     address = models.CharField(max_length=100, null=True, blank=True)
     phone = models.CharField(unique=True, max_length=20)
     date_of_birth = models.DateField(default=None, null=True)
-    profile_picture = models.ImageField(null=True, upload_to='static/', blank=True)
+    profile_picture = models.ImageField(null=True, upload_to='static/img/', blank=True)
     gender = enum.EnumField(Gender_choice, default=Gender_choice.Others)
 
     email = models.EmailField(unique=True) 
