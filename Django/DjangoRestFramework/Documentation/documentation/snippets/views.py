@@ -9,7 +9,7 @@ from rest_framework import status
 from rest_framework import mixins, generics
 from django.http import Http404
 from django.contrib.auth.models import User
-from rest_framework import permissions
+from rest_framework import permissions, viewsets
 from .permissions import IsOwnerOrReadOnly
 
 from .models import *
@@ -23,6 +23,11 @@ from rest_framework.parsers import JSONParser
 def index(request):
     return HttpResponse("Home")
 
+# ------------------------------ ViewSet-------------------------
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 # ----------------------------- End Point for api ---------------------------------------------
 @api_view(['GET'])

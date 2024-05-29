@@ -295,7 +295,7 @@ class TodoView(APIView):
     
     def post(self, request):
         try:
-            id = request.GET.get('id')
+            # id = request.GET.get('id')
             data = request.data
             serializer = TodoSerializer(data=data)
             if serializer.is_valid():

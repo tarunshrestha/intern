@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from django.contrib.auth.hashers import make_password  
 from .models import *
 import re
+from rest_framework.validators import UniqueTogetherValidator
 
 
 class TodoSerializer(serializers.ModelSerializer):
@@ -15,6 +16,8 @@ class TodoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Todo
         fields = '__all__'
+        # validators = [UniqueTogetherValidator(queryset = Todo.objects.all(), fields = ['title', 'description'])]
+        # extra_kwargs = { 'title': {"required":True}}
         # exculde = ['created_at']
         # fields = ['title', 'description','slug', 'texts', 'title_and_des']
 
@@ -37,6 +40,7 @@ class TodoSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     # tryEmail = serializers.CharField(max_length = 255)
+    i = serializers.PrimaryKeyRelatedField
     class Meta:
         model = CustomUser
         # fields = "__all__"
@@ -44,8 +48,8 @@ class UserSerializer(serializers.ModelSerializer):
         # exculde = ['is_superuser', 'is_staff', 'user_permissions',]
 
     def validate(self, data):
-        print(data['gender'])
-        data['gender'] = int(data['gender']) 
+        # print(data['gender'])
+        # data['gender'] = int(data['gender']) 
         # data['profile_picture'] = '/mnt/824EB9CC4EB9B96D/RealSoftHR/intern/Django/DjangoRestFramework/Basic/documentation' + data['profile_picture']
         # if data['username'].lower() == 'amar':
         #     raise serializers.ValidationError({'username':'Amar is blocked.'})
@@ -87,10 +91,11 @@ class LoginSerializer(serializers.Serializer):
             # user = authenticate(request=self.context.get('request'),
             #                     email=email, password=password)
         data['email'] = email.lower()
-        data['user'] = user     
+        data['user'] = user
         return data
 
 class VerifyAccountSerializer(serializers.Serializer):
     email = serializers.EmailField()
     otp = serializers.CharField()
+
 

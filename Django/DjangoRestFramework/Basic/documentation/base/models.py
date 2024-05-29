@@ -4,7 +4,7 @@ import datetime
 from django.contrib.auth.models import AbstractUser, Group, Permission, BaseUserManager
 from datetime import datetime, timedelta
 from django.utils import timezone 
-from .enums import *
+# from .enums import *
 
 # Create your models here.
 
@@ -16,7 +16,11 @@ class CustomUser(AbstractUser):
     phone = models.CharField(unique=True, max_length=20)
     date_of_birth = models.DateField(default=None, null=True)
     profile_picture = models.ImageField(null=True, upload_to='static/img/', blank=True)
-    gender = enum.EnumField(Gender_choice, default=Gender_choice.Others)
+    gender = models.CharField(max_length=8, choices=(
+        ('Male', 'Male'),
+        ('Female', 'Female'),
+        ('Others', 'Others'),
+    ),default='Others')
 
     email = models.EmailField(unique=True) 
     is_verified = models.BooleanField(default=False)
