@@ -39,21 +39,34 @@ class TodoSerializer(serializers.ModelSerializer):
     #     return obj.title + ' ' + str(obj.is_done)
 
 class UserSerializer(serializers.ModelSerializer):
+    # a = serializers.
     # tryEmail = serializers.CharField(max_length = 255)
-    i = serializers.PrimaryKeyRelatedField
+    # i = serializers.PrimaryKeyRelatedField
+    # texts = serializers.SerializerMethodField()
+    password2 = serializers.ReadOnlyField(required=False)
+
     class Meta:
         model = CustomUser
         # fields = "__all__"
-        fields = ['id', 'password', 'date_joined', 'first_name', 'last_name', 'username', 'address', 'phone', 'date_of_birth', 'profile_picture', 'gender', 'email', 'is_verified', 'otp']
+        fields = ['id', 'password', 'password2', 'date_joined', 'first_name', 'last_name', 'username', 'address', 'phone', 'date_of_birth', 'profile_picture', 'gender', 'email', 'is_verified', 'otp']
         # exculde = ['is_superuser', 'is_staff', 'user_permissions',]
 
+    def get_password2(self, data):
+        if  data['password'] != data['password2']:
+            raise serializers.ValidationError({'password':'Passwords doesnot match.'})
+
     def validate(self, data):
+        password = data['password']
+        if len(password) < 8 :
+            raise serializers.ValidationError({'password': 'Password must have more then 8 charecters.'})
         # print(data['gender'])
         # data['gender'] = int(data['gender']) 
         # data['profile_picture'] = '/mnt/824EB9CC4EB9B96D/RealSoftHR/intern/Django/DjangoRestFramework/Basic/documentation' + data['profile_picture']
         # if data['username'].lower() == 'amar':
         #     raise serializers.ValidationError({'username':'Amar is blocked.'})
         # data['password'] = make_password(data['password'])
+        # data.pop('password2', None)
+        print(data)
         return data
     
     # def get_tryEmail(self, data):

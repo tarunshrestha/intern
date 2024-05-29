@@ -139,11 +139,11 @@ class UserAPI(APIView):
         })
     
     def patch(self, request):
-        id = request.GET.get('id')
+        data = request.data
+        id = data['id']
         if not CustomUser.objects.filter(id = id).exists():
             Response({'message: "User id invalid.'}, 
                      status=status.HTTP_404_NOT_FOUND)
-        data = request.data
         user = CustomUser.objects.get(id = id)
         serializer = UserSerializer(user, data=data, partial = True)
         if serializer.is_valid():
