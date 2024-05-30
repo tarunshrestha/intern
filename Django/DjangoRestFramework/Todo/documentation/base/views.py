@@ -75,20 +75,17 @@ def post_todo(request):
         if serializer.is_valid():
             serializer.save()
             return Response({
-                'status':True,
                 'message':"Success data",
                 'data':serializer.data
                     })
 
         return Response({
-        'status':False,
         'message':"invalid data",
         'data':serializer.errors
             })
     except Exception as e:
         print(e)
     return Response({
-        'status':False,
         'message':"Something went wrong"    
         })
 
@@ -99,14 +96,12 @@ def patch_todo(request):
         data = request.data
         if not data.get('url_id'):
             return Response({
-                'status':False,
                 'message':"url_id is required.",
                 'data':{}
                 })
     except Exception as e:
         print(e)
         return Response({
-            'status':False,
             'message':"Invalid url_id."    
             })
     else:
@@ -115,7 +110,6 @@ def patch_todo(request):
         if serializer.is_valid():
             serializer.save()
             return Response({
-                'status':True,
                 'message':"Success data",
                 'data':serializer.data
                     })
@@ -129,18 +123,16 @@ class UserAPI(APIView):
             user = CustomUser.objects.get(id = id)
             serializer = UserSerializer(user)
             return Response({
-                'status': 200,
                 'message':"User Info",
                 "data": serializer.data
-            })
+            }, status=status.HTTP_202_ACCEPTED)
         return Response({
-            'status':400,
             'message':'User id is incorrect.',
-        })
+            }, status=status.HTTP_400_BAD_REQUEST)
     
     def patch(self, request):
         data = request.data
-        id = data['id']
+        id = data['user']
         if not CustomUser.objects.filter(id = id).exists():
             Response({'message: "User id invalid.'}, 
                      status=status.HTTP_404_NOT_FOUND)
@@ -163,15 +155,13 @@ class UserLogout(APIView):
         if request.user.is_authenticated:
             request.user.auth_token.delete()
             return Response({
-                'status': 200,
                 'message': "User logged out successfully."
-            })
+            }, status=status.HTTP_202_ACCEPTED)
 
         else:
             return Response({
-                'status': 400,
                 'message': "User is not logged in."
-            })
+            }, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginUser(APIView):
     # authentication_classes = [SessionAuthentication, BasicAuthentication]
@@ -213,15 +203,13 @@ class RegisterAPI(APIView):
                 serializer.save()
                 email.send_otp(serializer.data['email'])
                 return Response({
-                    'status':200,
                     'message': "User Registered Successfully.",
                     'data': serializer.data
-                })
+                }, status=status.HTTP_201_CREATED)
             return Response({
-                'status':400,
                 'message':"User Form Error.",
                 'errors': serializer.errors
-                })
+                }, status=status.HTTP_400_BAD_REQUEST)
         # except Exception as e:
         #     print(e)
         #     return Response({

@@ -43,7 +43,7 @@ class UserSerializer(serializers.ModelSerializer):
     # tryEmail = serializers.CharField(max_length = 255)
     # i = serializers.PrimaryKeyRelatedField
     # texts = serializers.SerializerMethodField()
-    password2 = serializers.ReadOnlyField(required=False)
+    password2 = serializers.CharField(required=True, write_only=True)
 
     class Meta:
         model = CustomUser
@@ -51,12 +51,11 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'password', 'password2', 'date_joined', 'first_name', 'last_name', 'username', 'address', 'phone', 'date_of_birth', 'profile_picture', 'gender', 'email', 'is_verified', 'otp']
         # exculde = ['is_superuser', 'is_staff', 'user_permissions',]
 
-    def get_password2(self, data):
-        if  data['password'] != data['password2']:
-            raise serializers.ValidationError({'password':'Passwords doesnot match.'})
-
     def validate(self, data):
         password = data['password']
+        print(data)
+        if  data['password'] != data['password2']:
+            raise serializers.ValidationError({'password':'Passwords doesnot match.'})
         if len(password) < 8 :
             raise serializers.ValidationError({'password': 'Password must have more then 8 charecters.'})
         # print(data['gender'])
@@ -69,14 +68,16 @@ class UserSerializer(serializers.ModelSerializer):
         print(data)
         return data
     
-    # def get_tryEmail(self, data):
-    #     if data:
-    #         import ipdb; ipdb.set_trace()
-    #     if '@' not in data['email'] and '.' not in data['email']:
-    #         raise serializers.ValidationError({'email':'Hello not there.'})
-    #     if "#" in data['email']:
-    #         raise serializers.ValidationError({'email':"Hello there"})
-    #     return data
+    def create(self, validated_data):
+        validated_data.pop('password2', None)
+        # validated_data['password'] = make_password(validated_data['password'])
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        validated_data.pop('password2', None)
+        # if 'password' in validated_data:
+            # validated_data['password'] = make_password(validated_data['password'])
+        return super().update(instance, validated_data)
     
 
 
@@ -92,6 +93,7 @@ class LoginSerializer(serializers.Serializer):
     def validate(self, data):
         email = data.get('email')
         password = data.get('password')
+        # password = make_password(password)
         # password = make_password(password)
         if not CustomUser.objects.filter(email = email).exists():
             raise serializers.ValidationError({'email':'Email doesnot exists.'})
