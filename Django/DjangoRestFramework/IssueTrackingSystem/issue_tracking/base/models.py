@@ -2,6 +2,11 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission
 
 # Create your models here.
+class Groups(Group):
+    def __str__(self):
+        return self.name
+
+
 class CustomUser(AbstractUser):
     first_name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
@@ -13,7 +18,8 @@ class CustomUser(AbstractUser):
         ('Female', 'Female'),
         ('Others', 'Others'),
     ),default='Others')
-    
+
+    groups = models.ManyToManyField(Group)
     email = models.EmailField(unique=True) 
     is_verified = models.BooleanField(default=False)
     otp = models.CharField(max_length=6, null=True, blank=True)
@@ -45,18 +51,28 @@ class Company(models.Model):
     def __str__(self):
         return self.name
 
+
+
 class Ticket(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='token')
+    created_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='token')
+    solved_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='token_solver', default=None)
     company = models.ManyToManyField(Company)
     title = models.CharField(max_length=150, unique=True)
     status_code = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=(
         ('Pending', 'Pending'),
         ('Forwarded', 'Forwarded'),
         ('Resolved', 'Resolved')
             ),default='Pending')
+    severity = models.CharField(max_length=20, choices=(
+        ('High', 'High'),
+        ('Medium', 'Medium'),
+        ('Low', 'Low')
+            ),default='Low')
     description = models.TextField()
-    allocation = models.CharField(max_length=10)
+    is_resolved = models.BooleanField(default=False)
+    assigned_to = models.ManyToManyField(Group)
     
     def __str__(self):
         return self.title 
