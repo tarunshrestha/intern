@@ -2,11 +2,11 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
-from rest_framework import status
+from rest_framework import status, generics
 from django.contrib.auth import login
 
 from .serializer import *
@@ -75,18 +75,13 @@ class LoginUser(APIView):
                 print(serializer.data)
                 user = CustomUser.objects.get(email=serializer.data['email'])
                 tokens = RefreshToken.for_user(user)
-                # return Response({'access': str(tokens.access_token), 'refresh': str(tokens)})
                 return Response({
                 'message': "User Logged in.",
                 'token': {'access': str(tokens.access_token), 'refresh': str(tokens)},
                 'data': serializer.data
                 }, status=status.HTTP_202_ACCEPTED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            # return Response({
-            #     'status':400,
-            #     'message':"Form is invalid.",
-            #     'error': serializer.errors   
-            #     })
+
         except Exception as e:
             print("------------------------------------------------------------------------")
             print(e)
@@ -111,5 +106,75 @@ class RegisterAPI(APIView):
                 }, status=status.HTTP_400_BAD_REQUEST)
 
         
+class UserTicketApi(generics.ListCreateAPIView, 
+                    generics.RetrieveUpdateDestroyAPIView):
+    queryset = Ticket.objects.all()
+    serializer_class = TicketSerializer
+    # permission_classes = [IsAuthenticatedOrReadOnly, IsAdminUser]
+
+    def get(self, request):
+        user_id = request.GET.get('created_user')
+        id = request.GET.get("id")
+        if id:
+            if Ticket.objects.filter(id=id).exists():
+                ticket = Ticket.objects.get(id = id)
+                serializer = self.serializer_class(ticket)
+                return Response({'message':"Ticket details.",
+                                 "data":serializer.data}, status=status.HTTP_202_ACCEPTED)
+            else:
+                return Response({"meassage":"Ticket id invalid."}, status=status.HTTP_400_BAD_REQUEST)
+                
+        elif user_id:
+            if CustomUser.objects.filter(id=user_id).exists():
+                serializer = self.serializer_class(Ticket.objects.filter(created_user = user_id), many=True)
+                return Response({'message':"All User Tickets.",
+                                 "data":serializer.data}, status=status.HTTP_202_ACCEPTED)
+            else:
+                return Response({"meassage":"User id invalid."}, status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            serializer = self.serializer_class(self.get_queryset(), many=True)
+            return Response({'message':"Ticket details.",
+                                 "data":serializer.data}, status=status.HTTP_202_ACCEPTED)
+        
+
+    def patch(self, request):
+            data = request.data
+            id = data['id']
+            print(id)
+            print(data)
+            if id:
+                if Ticket.objects.filter(id = id).exists():
+                    ticket = Ticket.objects.get(id = id)
+                    serializer = self.serializer_class(ticket, data=data, partial=True)
+                    print(serializer)
+                    if serializer.is_valid():
+                        serializer.save()
+                        return Response({
+                            'message':"Success data updated.",
+                            'data':serializer.data
+                                }, status=status.HTTP_202_ACCEPTED)
+                    else:
+                        return Response({"message":"something went wrong.", "error":serializer.error}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message':"Ticket id invalid.",}, status=status.HTTP_400_BAD_REQUEST)
+                    
+            return Response({'message':"Ticket id required.",}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+    def delete(self, request):
+            id = request.GET.get('id')
+            data = self.serializer_class(id = id)
+            if not data:
+                return Response({
+                    'message': "Id not found.",
+                })
+
+            data.delete()
+            return Response({
+                'status': True,
+                'message': "Todo deleted successfully."
+            })
+            
+
         
         

@@ -59,6 +59,7 @@ class LoginSerializer(serializers.Serializer):
         return data
     
 
+
 class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
@@ -69,6 +70,11 @@ class TicketSerializer(serializers.ModelSerializer):
         return validated_data
     
     def create(self, validated_data):
+        if "groups" not in validated_data:
+            validated_data["groups"] = [1]
+
+        if Ticket.objects.filter(title = validated_data['title'] ).exists():
+            raise serializers.ValidationError({"title":"Title already exists."})
         return super().create(validated_data)
     
     def update(self, instance, validated_data):
