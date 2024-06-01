@@ -105,12 +105,26 @@ class RegisterAPI(APIView):
                 'errors': serializer.errors
                 }, status=status.HTTP_400_BAD_REQUEST)
 
-        
+# ------------------------------------ Normal User ----------------------------------------------------------         
 class UserTicketApi(generics.ListCreateAPIView, 
                     generics.RetrieveUpdateDestroyAPIView):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
     # permission_classes = [IsAuthenticatedOrReadOnly, IsAdminUser]
+
+    def post(self, request):
+        data= request.data
+        user_id = data['created_user']
+        if user_id:
+            if CustomUser.objects.filter(id=user_id).exists():
+                user = CustomUser.objects.get(id = user_id)
+                serializer = self.serializer_class(data=data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response({"message":"Ticket created", 'data':serializer.data}, status=status.HTTP_201_CREATED)
+                return Response({"message":"Ticket validation error.", "error":serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message":"User id invalid."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message":"Something went wrong."}, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
         user_id = request.GET.get('created_user')
@@ -171,7 +185,12 @@ class UserTicketApi(generics.ListCreateAPIView,
             return Response({
                 'message': "Ticket deleted successfully."
             }, status=status.HTTP_202_ACCEPTED)
-            
+    
+# ------------------------------------ Dev User ----------------------------------------------------------         
+
+class DevUserApi(generics.RetrieveUpdateAPIView):
+    queryset= Ticket.objects.all()
+    serializer_class = TicketSerializer
 
         
         
