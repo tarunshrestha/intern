@@ -7,6 +7,14 @@ class Groups(Group):
         return self.name
 
 
+class Company(models.Model):
+    name = models.CharField(max_length=150, unique=True)
+    address = models.CharField(max_length=150)
+    number = models.CharField(max_length=15)
+
+    def __str__(self):
+        return self.name
+
 class CustomUser(AbstractUser):
     first_name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
@@ -18,8 +26,8 @@ class CustomUser(AbstractUser):
         ('Female', 'Female'),
         ('Others', 'Others'),
     ),default='Others')
-
-    groups = models.ManyToManyField(Group)
+    company = models.ManyToManyField(Company, default="", blank=True)
+    groups = models.ManyToManyField(Group, default="", blank=True)
     email = models.EmailField(unique=True) 
     is_verified = models.BooleanField(default=False)
     otp = models.CharField(max_length=6, null=True, blank=True)
@@ -28,18 +36,11 @@ class CustomUser(AbstractUser):
     def __str__(self):
        return self.username
 
-class Company(models.Model):
-    name = models.CharField(max_length=150, unique=True)
-    address = models.CharField(max_length=150)
-    number = models.CharField(max_length=15)
-
-    def __str__(self):
-        return self.name
-
 
 
 class Ticket(models.Model):
     created_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='token')
+    recent_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='token_editor', default=None)
     solved_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='token_solver', default=None)
     company = models.ManyToManyField(Company)
     title = models.CharField(max_length=150, unique=True)
@@ -57,7 +58,9 @@ class Ticket(models.Model):
             ),default='Low')
     description = models.TextField()
     is_resolved = models.BooleanField(default=False)
-    assigned_to = models.ManyToManyField(Group)
+    assigned_to = models.ManyToManyField(Group, default="", blank=True)
+    company = models.ManyToManyField(Company, default="", blank=True)
+
     
     def __str__(self):
         return self.title 

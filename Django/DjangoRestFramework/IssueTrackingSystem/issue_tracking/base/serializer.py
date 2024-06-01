@@ -13,7 +13,9 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'password', 'password2', 'date_joined', 'first_name', 'last_name', 'username', 'groups', 'phone', 'date_of_birth', 'profile_picture', 'gender', 'email', 'is_verified', 'otp']
+        fields = ['id', 'password', 'password2', 'date_joined', 'first_name', 'last_name',
+                   'username', 'groups', 'phone', 'date_of_birth', 'profile_picture', 'gender',
+                     'email', 'is_verified', 'otp', 'company']
 
     def validate(self, data):
         password = data['password']
@@ -27,6 +29,8 @@ class UserSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         validated_data.pop('password2', None)
+        if "groups" not in validated_data:
+            validated_data["groups"] = [4]
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
