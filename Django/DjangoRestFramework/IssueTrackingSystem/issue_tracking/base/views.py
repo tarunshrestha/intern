@@ -162,18 +162,15 @@ class UserTicketApi(generics.ListCreateAPIView,
     
 
     def delete(self, request):
-            id = request.GET.get('id')
-            data = self.serializer_class(id = id)
-            if not data:
-                return Response({
-                    'message': "Id not found.",
-                })
-
-            data.delete()
+            id = request.data['id']
+            print(id)
+            if not Ticket.objects.filter(id=id).exists():
+                return Response({'message':"Ticket id invalid."}, status=status.HTTP_400_BAD_REQUEST)
+            ticket = Ticket.objects.get(id = id)
+            ticket.delete()
             return Response({
-                'status': True,
-                'message': "Todo deleted successfully."
-            })
+                'message': "Ticket deleted successfully."
+            }, status=status.HTTP_202_ACCEPTED)
             
 
         
