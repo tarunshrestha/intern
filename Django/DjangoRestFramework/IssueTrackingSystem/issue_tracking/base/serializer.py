@@ -79,9 +79,26 @@ class TicketSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
     
     def update(self, instance, validated_data):
-        group = CustomUser.objects.get(id = validated_data["id"]).groups
-        if group != [4]:
-            pass
+        group = CustomUser.objects.get(id = validated_data["recent_user"].id).groups.first().id
+        # id = Ticket.objects.get(id=validated_data['id'])
+        print('------------------------------')
+        print(validated_data, instance)
+        if group != 4:
+            if Ticket.objects.get(id=instance.id).assigned_to.first().id != group:
+                raise serializers.ValidationError({"User":"Permission not granted."})
+            if validated_data['status'] == 'Forwarded':
+                if group == 1:
+                    if 'assigned_to' not in validated_data:
+                        validated_data['assigned_to'] = [2]
+                elif group == 2:
+                    if 'assigned_to' not in validated_data:
+                        validated_data['assigned_to'] = [3]
+                else:
+                    raise serializers.ValidationError({"User":"L3 user's cannot Forward."})
+            elif validated_data['status'] == 'Resolved':
+                if 'solved_by' not in validated_data:
+                    validated_data['solved_by'] = validated_data['recent_user']
+
             
         return super().update(instance, validated_data)
     

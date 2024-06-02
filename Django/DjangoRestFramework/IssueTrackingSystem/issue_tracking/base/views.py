@@ -203,7 +203,7 @@ class DevUserApi(generics.RetrieveUpdateAPIView):
         return Response({"message":"User id invalid."}, status=status.HTTP_400_BAD_REQUEST)
     
     def patch(self, request):
-        data = request.data
+        data = request.data # recent_user
         ticket_id = data['id']
         user_id = data['recent_user']
         if Ticket.objects.filter(id=ticket_id):
