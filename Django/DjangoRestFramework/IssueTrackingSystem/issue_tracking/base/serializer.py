@@ -5,7 +5,6 @@ from rest_framework.response import Response
 from django.contrib.auth.hashers import make_password  
 from .models import *
 import re
-from rest_framework.validators import UniqueTogetherValidator
 
 
 class UserSerializer(serializers.ModelSerializer):

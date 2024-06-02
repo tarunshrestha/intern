@@ -4,7 +4,9 @@ from rest_framework.views import APIView
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.db.models import Case, When, Value, IntegerField
 
+from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
 
 from rest_framework import status, generics, mixins
 from django.contrib.auth import login
@@ -108,8 +110,15 @@ class RegisterAPI(APIView):
 # ------------------------------------ Normal User ----------------------------------------------------------         
 class UserTicketApi(generics.ListCreateAPIView, 
                     generics.RetrieveUpdateDestroyAPIView):
-    queryset = Ticket.objects.all()
+    queryset = Ticket.objects.annotate(
+    severity_order=Case(
+        When(severity='high', then=Value(1)),
+        When(severity='medium', then=Value(2)),
+        When(severity='low', then=Value(3)),
+        output_field=IntegerField(),
+    )).order_by('severity_order')
     serializer_class = TicketSerializer
+    pagination_class = PageNumberPagination
     # permission_classes = [IsAuthenticatedOrReadOnly, IsAdminUser]
 
     def post(self, request):
@@ -191,6 +200,7 @@ class UserTicketApi(generics.ListCreateAPIView,
 class DevUserApi(generics.RetrieveUpdateAPIView):
     queryset= Ticket.objects.all()
     serializer_class = TicketSerializer
+    pagination_class = PageNumberPagination
     # permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request):
@@ -228,6 +238,7 @@ class DevUserApi(generics.RetrieveUpdateAPIView):
 class CommentApi(generics.ListCreateAPIView, mixins.DestroyModelMixin):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+    pagination_class = PageNumberPagination
 
     def post(self, request):
         data = request.data
