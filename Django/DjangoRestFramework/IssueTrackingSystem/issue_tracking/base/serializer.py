@@ -70,20 +70,23 @@ class TicketSerializer(serializers.ModelSerializer):
         return validated_data
     
     def create(self, validated_data):
+        if CustomUser.objects.get(id = validated_data["id"]).groups != [4]:
+            raise serializers.ValidationError({"User": "Only Normal users can create Tickets."})
         if Ticket.objects.filter(title = validated_data['title'] ).exists():
             raise serializers.ValidationError({"title":"Title already exists."})
         if "assigned_to" not in validated_data:
             validated_data["assigned_to"] = [1]
-        
-        # if "company" not in validated_data:
-
-            # validated_data["company"] = Company.objects.get(id = CustomUser.objects.get(id=))
-
-        
         return super().create(validated_data)
     
     def update(self, instance, validated_data):
+        group = CustomUser.objects.get(id = validated_data["id"]).groups
+        if group != [4]:
+            pass
+            
         return super().update(instance, validated_data)
+    
+
+
 
 
 

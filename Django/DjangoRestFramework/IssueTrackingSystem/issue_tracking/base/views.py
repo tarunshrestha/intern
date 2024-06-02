@@ -191,6 +191,41 @@ class UserTicketApi(generics.ListCreateAPIView,
 class DevUserApi(generics.RetrieveUpdateAPIView):
     queryset= Ticket.objects.all()
     serializer_class = TicketSerializer
+    # permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get(self, request):
+        id = request.GET.get('id')
+        if CustomUser.objects.filter(id=id).exists():
+            data = Ticket.objects.filter(assigned_to = CustomUser.objects.get(id=id).groups)
+            serializer = self.get_serializer_class(data, many=True)
+            return Response({'message':"Assigned Tickets.", 
+                             'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
+        return Response({"message":"User id invalid."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def patch(self, request):
+        data = request.data
+        ticket_id = data['id']
+        user_id = data['recent_user']
+        if Ticket.objects.filter(id=ticket_id):
+            ticket = Ticket.objects.get(id = ticket_id)
+            if CustomUser.objects.filter(id=user_id).exists():
+                serializer = self.serializer_class(ticket, data=data, partial=True)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response({
+                        'message':"Ticket updated.",
+                        'data': serializer.data
+                    }, status=status.HTTP_202_ACCEPTED)
+                return Response({"message":"Something went wrong.",
+                                 "error":serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({"message":"Something went wrong."}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"message":"Something went wrong."}, status=status.HTTP_400_BAD_REQUEST)
+            
+            
+
+
 
         
         
