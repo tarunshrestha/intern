@@ -32,7 +32,6 @@ class CustomUser(AbstractUser):
     is_verified = models.BooleanField(default=False)
     otp = models.CharField(max_length=6, null=True, blank=True)
 
-
     def __str__(self):
        return self.username
 
@@ -61,7 +60,16 @@ class Ticket(models.Model):
     assigned_to = models.ManyToManyField(Group, default="", blank=True)
     company = models.ManyToManyField(Company, default="", blank=True)
 
-    
     def __str__(self):
         return self.title 
+    
+
+class Comment(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="comment")
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="comments") 
+    body = models.TextField()
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.user}, {self.date_added} '
 

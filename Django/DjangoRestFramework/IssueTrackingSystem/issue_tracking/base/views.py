@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser, I
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
-from rest_framework import status, generics
+from rest_framework import status, generics, mixins
 from django.contrib.auth import login
 
 from .serializer import *
@@ -196,8 +196,8 @@ class DevUserApi(generics.RetrieveUpdateAPIView):
     def get(self, request):
         id = request.GET.get('id')
         if CustomUser.objects.filter(id=id).exists():
-            data = Ticket.objects.filter(assigned_to = CustomUser.objects.get(id=id).groups)
-            serializer = self.get_serializer_class(data, many=True)
+            data = Ticket.objects.filter(assigned_to = CustomUser.objects.get(id=id).groups.first())
+            serializer = self.serializer_class(data, many=True)
             return Response({'message':"Assigned Tickets.", 
                              'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
         return Response({"message":"User id invalid."}, status=status.HTTP_400_BAD_REQUEST)
@@ -224,7 +224,34 @@ class DevUserApi(generics.RetrieveUpdateAPIView):
             return Response({"message":"Something went wrong."}, status=status.HTTP_400_BAD_REQUEST)
             
             
+#----------------------------- CommentApi -------------------------------------------------
+class CommentApi(generics.ListCreateAPIView, mixins.DestroyModelMixin):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
 
+    def post(self, request):
+        data = request.data
+        print(data)
+        if data['ticket'] and data['user']:
+            if Ticket.objects.filter(id=data['ticket']).exists() and CustomUser.objects.filter(id=data['user']).exists():
+                serializer = self.serializer_class(data=data)
+                if serializer.is_valid():
+                    serializer.save()
+                return Response({'message': 'Something went wrong.', 
+                                 'data': serializer.data}, status=status.HTTP_201_CREATED)
+            return Response({'message': 'Ticket id invalid.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Something went wrong.'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get(self, request):
+        id = request.GET.get('ticket')
+        print(id)
+        if not Ticket.objects.filter(id=id).exists():
+            return Response({'message': 'Ticket id invalid.'}, status=status.HTTP_400_BAD_REQUEST)
+        data = Comment.objects.filter(ticket = id)
+        serializer = self.serializer_class(data, many=True)
+        return Response({'message': 'Ticket comments.', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
+
+        
 
 
         

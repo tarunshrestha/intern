@@ -80,9 +80,8 @@ class TicketSerializer(serializers.ModelSerializer):
     
     def update(self, instance, validated_data):
         group = CustomUser.objects.get(id = validated_data["recent_user"].id).groups.first().id
-        # id = Ticket.objects.get(id=validated_data['id'])
-        print('------------------------------')
-        print(validated_data, instance)
+        # print('------------------------------')
+        # print(validated_data, instance)
         if group != 4:
             if Ticket.objects.get(id=instance.id).assigned_to.first().id != group:
                 raise serializers.ValidationError({"User":"Permission not granted."})
@@ -98,11 +97,21 @@ class TicketSerializer(serializers.ModelSerializer):
             elif validated_data['status'] == 'Resolved':
                 if 'solved_by' not in validated_data:
                     validated_data['solved_by'] = validated_data['recent_user']
-
             
         return super().update(instance, validated_data)
     
 
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = "__all__" 
+
+    def validate(self, attrs):
+        return super().validate(attrs)   
+    
+    def create(self, validated_data):
+        print(validated_data)
+        return super().create(validated_data)
 
 
 

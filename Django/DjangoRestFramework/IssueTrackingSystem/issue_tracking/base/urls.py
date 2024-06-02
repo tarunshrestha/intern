@@ -10,6 +10,8 @@ urlpatterns = [
     # path('dashboard/', UserTicketApi.as_view()),
     path('user_ticket/', UserTicketApi.as_view()),
     path('developer_ticket/', DevUserApi.as_view()),
+    path('comment/', CommentApi.as_view()),
+
     
 
 ]
