@@ -1,5 +1,13 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AbstractUser, Group, Permission
+
+# function validation
+def bug_validation(bug):
+    bug_types = ["trojan", "trojan-horse", 'vpn', 'proxy', 'facebook', 'instagram'] 
+    if bug.lower() in bug_types:
+        raise ValidationError("This bug cannot be stored in database.")
+
 
 # Create your models here.
 class Groups(Group):
@@ -20,7 +28,7 @@ class CustomUser(AbstractUser):
     last_name = models.CharField(max_length=50, blank=True)
     phone = models.CharField(max_length=20)
     date_of_birth = models.DateField(default=None, null=True)
-    profile_picture = models.ImageField(null=True, upload_to='static/img/', blank=True)
+    # profile_picture = models.ImageField(null=True, upload_to='static/img/', blank=True)
     gender = models.CharField(max_length=8, choices=(
         ('Male', 'Male'),
         ('Female', 'Female'),
@@ -48,7 +56,8 @@ class Ticket(models.Model):
     status = models.CharField(max_length=20, choices=(
         ('Pending', 'Pending'),
         ('Forwarded', 'Forwarded'),
-        ('Resolved', 'Resolved')
+        ('Resolved', 'Resolved'),
+        ("Decline", "Decline")
             ),default='Pending')
     severity = models.CharField(max_length=20, choices=(
         ('High', 'High'),
@@ -59,6 +68,8 @@ class Ticket(models.Model):
     is_resolved = models.BooleanField(default=False)
     assigned_to = models.ManyToManyField(Group, default="", blank=True)
     company = models.ManyToManyField(Company, default="", blank=True)
+    bug_type = models.CharField(max_length=50, default="", blank=True, validators=[bug_validation])
+
 
     def __str__(self):
         return self.title 

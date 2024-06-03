@@ -127,7 +127,7 @@ class UserTicketApi(generics.ListCreateAPIView,
         if user_id:
             if CustomUser.objects.filter(id=user_id).exists():
                 user = CustomUser.objects.get(id = user_id)
-                serializer = self.serializer_class(data=data)
+                serializer = self.get_serializer(data=data)
                 if serializer.is_valid():
                     serializer.save()
                     return Response({"message":"Ticket created", 'data':serializer.data}, status=status.HTTP_201_CREATED)
@@ -141,7 +141,7 @@ class UserTicketApi(generics.ListCreateAPIView,
         if id:
             if Ticket.objects.filter(id=id).exists():
                 ticket = Ticket.objects.get(id = id)
-                serializer = self.serializer_class(ticket)
+                serializer = self.get_serializer(ticket)                
                 return Response({'message':"Ticket details.",
                                  "data":serializer.data}, status=status.HTTP_202_ACCEPTED)
             else:
@@ -149,16 +149,14 @@ class UserTicketApi(generics.ListCreateAPIView,
                 
         elif user_id:
             if CustomUser.objects.filter(id=user_id).exists():
-                serializer = self.serializer_class(Ticket.objects.filter(created_user = user_id), many=True)
+                serializer = self.get_serializer(Ticket.objects.filter(created_user = user_id), many=True)
                 return Response({'message':"All User Tickets.",
                                  "data":serializer.data}, status=status.HTTP_202_ACCEPTED)
             else:
                 return Response({"meassage":"User id invalid."}, status=status.HTTP_400_BAD_REQUEST)
 
         else:
-            serializer = self.serializer_class(self.get_queryset(), many=True)
-            return Response({'message':"Ticket details.",
-                                 "data":serializer.data}, status=status.HTTP_202_ACCEPTED)
+            return Response({'message':"Login first."}, status=status.HTTP_400_BAD_REQUEST)
         
 
     def patch(self, request):
@@ -198,8 +196,7 @@ class UserTicketApi(generics.ListCreateAPIView,
 # ------------------------------------ Dev User ----------------------------------------------------------         
 
 class DevUserApi(generics.RetrieveUpdateAPIView):
-    queryset= Ticket.objects.annotate(
-        severity_order=Case(
+    queryset= Ticket.objects.annotate(severity_order=Case(
         When(severity='high', then=Value(1)),
         When(severity='medium', then=Value(2)),
         When(severity='low', then=Value(3)),

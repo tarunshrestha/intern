@@ -3,6 +3,8 @@ from django.template.defaultfilters import slugify
 from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from django.contrib.auth.hashers import make_password  
+from django.forms.models import model_to_dict
+
 from .models import *
 import re
 
@@ -13,7 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['id', 'password', 'password2', 'date_joined', 'first_name', 'last_name',
-                   'username', 'groups', 'phone', 'date_of_birth', 'profile_picture', 'gender',
+                   'username', 'groups', 'phone', 'date_of_birth', 'gender',
                      'email', 'is_verified', 'otp', 'company']
 
     def validate(self, data):
@@ -60,21 +62,25 @@ class LoginSerializer(serializers.Serializer):
 
 
 class TicketSerializer(serializers.ModelSerializer):
+    # created_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    created_user = serializers.SerializerMethodField()
+
     class Meta:
         model = Ticket
         fields = '__all__'
-
 
     def validate(self, validated_data):
         return validated_data
     
     def create(self, validated_data):
-        if CustomUser.objects.get(id = validated_data["id"]).groups != [4]:
+        # print("-------------------------------------------------------------")
+        # print(Group.objects.get(name = "L1"))
+        if CustomUser.objects.get(id = validated_data["created_user"].id).groups.first() != Group.objects.get(name = "NormalUser"):
             raise serializers.ValidationError({"User": "Only Normal users can create Tickets."})
         if Ticket.objects.filter(title = validated_data['title'] ).exists():
             raise serializers.ValidationError({"title":"Title already exists."})
         if "assigned_to" not in validated_data:
-            validated_data["assigned_to"] = [1]
+            validated_data["assigned_to"] = [Group.objects.get(name = "L1").id]
         return super().create(validated_data)
     
     def update(self, instance, validated_data):
@@ -84,13 +90,15 @@ class TicketSerializer(serializers.ModelSerializer):
         if group != 4:
             if Ticket.objects.get(id=instance.id).assigned_to.first().id != group:
                 raise serializers.ValidationError({"User":"Permission not granted."})
+            if validated_data['status'] == 'Decline':
+                validated_data['assigned_to'] = [Group.objects.get(name = "NormalUser").id]
             if validated_data['status'] == 'Forwarded':
-                if group == 1:
+                if group == Group.objects.get(name = "L1").id:
                     if 'assigned_to' not in validated_data:
-                        validated_data['assigned_to'] = [2]
-                elif group == 2:
+                        validated_data['assigned_to'] = [Group.objects.get(name = "L2").id]
+                elif group == Group.objects.get(name = "L2").id:
                     if 'assigned_to' not in validated_data:
-                        validated_data['assigned_to'] = [3]
+                        validated_data['assigned_to'] = [Group.objects.get(name = "L3").id]
                 else:
                     raise serializers.ValidationError({"User":"L3 user's cannot Forward."})
             elif validated_data['status'] == 'Resolved':
@@ -98,6 +106,19 @@ class TicketSerializer(serializers.ModelSerializer):
                     validated_data['solved_by'] = validated_data['recent_user']
             
         return super().update(instance, validated_data)
+    
+    def get_created_user(self, obj):
+        # print(obj)
+        # prof_obj = Profile.objects.get(user=User.objects.get(pk=obj.id))
+
+        # user_ids = [i.id for i in obj.created_user]
+        # users = CustomUser.objects.filter(id__in=user_ids)
+        # serializer = UserSerializer(users, many=True)
+
+        serializer = UserSerializer(CustomUser.objects.get(id = obj.created_user.id))
+        # print("----------------------------------------------------")
+        # print(serializer.data)
+        return serializer.data
     
 
 class CommentSerializer(serializers.ModelSerializer):
