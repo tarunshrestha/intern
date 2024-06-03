@@ -116,9 +116,9 @@ class UserTicketApi(generics.ListCreateAPIView,
         When(severity='medium', then=Value(2)),
         When(severity='low', then=Value(3)),
         output_field=IntegerField(),
-    )).order_by('severity_order')
+    )).order_by('severity_order')[::-1]
     serializer_class = TicketSerializer
-    pagination_class = PageNumberPagination
+    # pagination_class = PageNumberPagination
     # permission_classes = [IsAuthenticatedOrReadOnly, IsAdminUser]
 
     def post(self, request):
@@ -198,10 +198,17 @@ class UserTicketApi(generics.ListCreateAPIView,
 # ------------------------------------ Dev User ----------------------------------------------------------         
 
 class DevUserApi(generics.RetrieveUpdateAPIView):
-    queryset= Ticket.objects.all()
+    queryset= Ticket.objects.annotate(
+        severity_order=Case(
+        When(severity='high', then=Value(1)),
+        When(severity='medium', then=Value(2)),
+        When(severity='low', then=Value(3)),
+        output_field=IntegerField(),
+    )).order_by('severity_order')[::-1]
     serializer_class = TicketSerializer
-    pagination_class = PageNumberPagination
+    # pagination_class = PageNumberPagination
     # permission_classes = [IsAuthenticatedOrReadOnly]
+    
 
     def get(self, request):
         id = request.GET.get('id')
