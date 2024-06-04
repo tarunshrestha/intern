@@ -70,12 +70,14 @@ class LoginUser(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        try:
             data= request.data
             serializer = LoginSerializer(data=data)
             if serializer.is_valid():
-                print(serializer.data)
-                user = CustomUser.objects.get(email=serializer.data['email'])
+                # print('@' in serializer.data['username'])
+                if '@' not in serializer.data['username']:
+                    user = CustomUser.objects.get(username=serializer.data['username'])
+                else:
+                    user = CustomUser.objects.get(email=serializer.data['username'])
                 tokens = RefreshToken.for_user(user)
                 return Response({
                 'message': "User Logged in.",
@@ -83,13 +85,6 @@ class LoginUser(APIView):
                 'data': serializer.data
                 }, status=status.HTTP_202_ACCEPTED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        except Exception as e:
-            print("------------------------------------------------------------------------")
-            print(e)
-            return Response({
-                'message':"Something went wrong"
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class RegisterAPI(APIView):
     permission_classes = [AllowAny]

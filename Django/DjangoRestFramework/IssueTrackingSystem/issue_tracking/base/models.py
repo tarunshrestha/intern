@@ -40,6 +40,8 @@ class CustomUser(AbstractUser):
     is_verified = models.BooleanField(default=False)
     otp = models.CharField(max_length=6, null=True, blank=True)
 
+    # USERNAME_FIELD="username"
+
     def __str__(self):
        return self.username
 

@@ -7,6 +7,8 @@ urlpatterns = [
     path('logout', UserLogout.as_view()),
     path('register/', RegisterAPI.as_view()),
 
+
+
     # path('dashboard/', UserTicketApi.as_view()),
     path('user_ticket/', UserTicketApi.as_view()),
     path('developer_ticket/', DevUserApi.as_view()),

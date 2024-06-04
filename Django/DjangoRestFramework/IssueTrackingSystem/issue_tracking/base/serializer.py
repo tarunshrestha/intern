@@ -42,20 +42,35 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class LoginSerializer(serializers.Serializer):
-    email = serializers.EmailField()
+    username = serializers.CharField(required=False)
     password = serializers.CharField()
 
     def validate(self, data):
-        email = data.get('email')
+        print("-------------------------------------")
         password = data.get('password')
-        if not CustomUser.objects.filter(email = email).exists():
-            raise serializers.ValidationError({'email':'Email doesnot exists.'})
-        user = CustomUser.objects.get(email = email)
-        if user.password != password:
-            raise serializers.ValidationError({'password':'Password not matched.'})
-        if email and password:
-            user = authenticate(email=email, password=password)
-        data['email'] = email.lower()
+ 
+        if '@' in data.get('username'):
+            email = data.get('username').lower()
+
+            if not CustomUser.objects.filter(email = email).exists():
+                raise serializers.ValidationError({'email':'email doesnot exists.'})
+            
+            user = CustomUser.objects.get(email = email)
+            if user.password != password:
+                raise serializers.ValidationError({'password':'Password not matched.'})
+            if email and password:
+                user = authenticate(email=email, password=password)
+            data['username'] = email.lower()
+        else:
+            username = data.get('username').lower()
+            if not CustomUser.objects.filter(username = username).exists():
+                raise serializers.ValidationError({'username':'username doesnot exists.'})
+            user = CustomUser.objects.get(username = username)
+            if user.password != password:
+                raise serializers.ValidationError({'password':'Password not matched.'})
+            if username and password:
+                user = authenticate(username=username, password=password)
+            data['username'] = username.lower()
         data['user'] = user
         return data
     
