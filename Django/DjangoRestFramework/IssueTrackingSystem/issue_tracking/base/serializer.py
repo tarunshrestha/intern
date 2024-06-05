@@ -32,6 +32,7 @@ class UserSerializer(serializers.ModelSerializer):
         validated_data.pop('password2', None)
         if "groups" not in validated_data:
             validated_data["groups"] = [4]
+        validated_data['password'] = make_password(validated_data['password'])
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
@@ -66,8 +67,8 @@ class LoginSerializer(serializers.Serializer):
             if not CustomUser.objects.filter(username = username).exists():
                 raise serializers.ValidationError({'username':'username doesnot exists.'})
             user = CustomUser.objects.get(username = username)
-            if user.password != password:
-                raise serializers.ValidationError({'password':'Password not matched.'})
+            # if user.password != password:
+            #     raise serializers.ValidationError({'password':'Password not matched.'})
             if username and password:
                 user = authenticate(username=username, password=password)
             data['username'] = username.lower()
@@ -80,22 +81,32 @@ class TicketSerializer(serializers.ModelSerializer):
     # created_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     created_user = serializers.SerializerMethodField()
 
+
     class Meta:
         model = Ticket
         fields = '__all__'
+
+    def _user(self, obj):
+        request = self.context.get('request', None)
+        if request:
+            return request.user
 
     def validate(self, validated_data):
         return validated_data
     
     def create(self, validated_data):
-        # print("-------------------------------------------------------------")
-        # print(Group.objects.get(name = "L1"))
-        if CustomUser.objects.get(id = validated_data["created_user"].id).groups.first() != Group.objects.get(name = "NormalUser"):
+        print("-------------------------------------------------------------")
+        # print(self.context.get('request').user.id)
+        user = self.context.get('request').user
+        if CustomUser.objects.get(id = user.id).groups.first() != Group.objects.get(name = "NormalUser"):
             raise serializers.ValidationError({"User": "Only Normal users can create Tickets."})
         if Ticket.objects.filter(title = validated_data['title'] ).exists():
             raise serializers.ValidationError({"title":"Title already exists."})
-        if "assigned_to" not in validated_data:
+        if len(validated_data["assigned_to"]) == 0:
             validated_data["assigned_to"] = [Group.objects.get(name = "L1").id]
+        print("-------------------------------------------------------------")
+        validated_data['created_user'] = user
+
         return super().create(validated_data)
     
     def update(self, instance, validated_data):

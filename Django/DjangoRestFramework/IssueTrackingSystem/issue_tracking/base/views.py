@@ -5,9 +5,9 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.db.models import Case, When, Value, IntegerField
-
+from django.shortcuts import redirect
 from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
-
+from rest_framework.authtoken.models import Token
 from rest_framework import status, generics, mixins
 from django.contrib.auth import login
 
@@ -20,7 +20,8 @@ from .models import *
 # -------------------------------------------- Class Based User --------------------------
 class UserAPI(APIView):
     def get(self,request):
-        id = request.GET.get('id')
+        id = request.user.id
+
         if CustomUser.objects.filter(id = id).exists():
             user = CustomUser.objects.get(id = id)
             serializer = UserSerializer(user)
@@ -53,7 +54,7 @@ class UserAPI(APIView):
 class UserLogout(APIView):
     permission_classes=[AllowAny]
 
-    def post(self, request):
+    def get(self, request):
         if request.user.is_authenticated:
             request.user.auth_token.delete()
             return Response({
@@ -65,8 +66,19 @@ class UserLogout(APIView):
                 'message': "User is not logged in."
             }, status=status.HTTP_400_BAD_REQUEST)
 
+class ExampleView(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        content = {
+            'user': str(request.user),  # `django.contrib.auth.User` instance.
+            'auth': str(request.auth),  # None
+        }
+        return Response(content)
+
 class LoginUser(APIView):
-    # authentication_classes = [SessionAuthentication, BasicAuthentication]
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -85,6 +97,13 @@ class LoginUser(APIView):
                 'data': serializer.data
                 }, status=status.HTTP_202_ACCEPTED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    # def get(self, request, format=None):
+    #     content = {
+    #         'user': str(request.user),  # `django.contrib.auth.User` instance.
+    #         'auth': str(request.auth),  # None
+    #     }
+    #     return Response(content)
 
 class RegisterAPI(APIView):
     permission_classes = [AllowAny]
@@ -114,11 +133,12 @@ class UserTicketApi(generics.ListCreateAPIView,
     )).order_by('severity_order')[::-1]
     serializer_class = TicketSerializer
     # pagination_class = PageNumberPagination
-    # permission_classes = [IsAuthenticatedOrReadOnly, IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        
         data= request.data
-        user_id = data['created_user']
+        user_id = request.user.id
         if user_id:
             if CustomUser.objects.filter(id=user_id).exists():
                 user = CustomUser.objects.get(id = user_id)
@@ -131,10 +151,12 @@ class UserTicketApi(generics.ListCreateAPIView,
         return Response({"message":"Something went wrong."}, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
-        user_id = request.GET.get('created_user')
+        user_id = request.user.id
         id = request.GET.get("id")
+
         if id:
             if Ticket.objects.filter(id=id).exists():
+               
                 ticket = Ticket.objects.get(id = id)
                 serializer = self.get_serializer(ticket)                
                 return Response({'message':"Ticket details.",
@@ -143,7 +165,10 @@ class UserTicketApi(generics.ListCreateAPIView,
                 return Response({"meassage":"Ticket id invalid."}, status=status.HTTP_400_BAD_REQUEST)
                 
         elif user_id:
-            if CustomUser.objects.filter(id=user_id).exists():
+            user = CustomUser.objects.filter(id=user_id)
+            if user.exists():
+                if user.first().groups.first() != Group.objects.get(name = "NormalUser"):
+                    return redirect('developer_ticket')
                 serializer = self.get_serializer(Ticket.objects.filter(created_user = user_id), many=True)
                 return Response({'message':"All User Tickets.",
                                  "data":serializer.data}, status=status.HTTP_202_ACCEPTED)
@@ -190,7 +215,8 @@ class UserTicketApi(generics.ListCreateAPIView,
     
 # ------------------------------------ Dev User ----------------------------------------------------------         
 
-class DevUserApi(generics.RetrieveUpdateAPIView):
+class DevUserApi(mixins.UpdateModelMixin,
+                generics.GenericAPIView):
     queryset= Ticket.objects.annotate(severity_order=Case(
         When(severity='high', then=Value(1)),
         When(severity='medium', then=Value(2)),
@@ -199,13 +225,21 @@ class DevUserApi(generics.RetrieveUpdateAPIView):
     )).order_by('severity_order')[::-1]
     serializer_class = TicketSerializer
     # pagination_class = PageNumberPagination
-    # permission_classes = [IsAuthenticatedOrReadOnly]
+    # lookup_field = 'pk'
+    permission_classes = [IsAuthenticated]
     
 
     def get(self, request):
-        id = request.GET.get('id')
-        if CustomUser.objects.filter(id=id).exists():
-            data = Ticket.objects.filter(assigned_to = CustomUser.objects.get(id=id).groups.first())
+        id = request.user.id
+        # id = kwargs.get('id')
+        print("-----------------------------------------")
+        user = CustomUser.objects.filter(id=id)
+        if user.exists(): 
+            print("-----------------------------------------------------------")
+            # print( user.first().groups.first() == Group.objects.get(name = "NormalUser"))
+            if user.first().groups.first() == Group.objects.get(name = "NormalUser"):
+                return redirect('user_ticket')
+            data = Ticket.objects.filter(assigned_to = user.first().groups.first())
             serializer = self.serializer_class(data, many=True)
             return Response({'message':"Assigned Tickets.", 
                              'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
@@ -214,9 +248,10 @@ class DevUserApi(generics.RetrieveUpdateAPIView):
     def patch(self, request):
         data = request.data # recent_user
         ticket_id = data['id']
-        user_id = data['recent_user']
-        if Ticket.objects.filter(id=ticket_id):
-            ticket = Ticket.objects.get(id = ticket_id)
+        user_id = data.user.id
+        tickets = Ticket.objects.filter(id=ticket_id)
+        if tickets.exists():
+            ticket = tickets.get(id = ticket_id)
             if CustomUser.objects.filter(id=user_id).exists():
                 serializer = self.serializer_class(ticket, data=data, partial=True)
                 if serializer.is_valid():
@@ -231,6 +266,9 @@ class DevUserApi(generics.RetrieveUpdateAPIView):
                 return Response({"message":"Something went wrong."}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({"message":"Something went wrong."}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+
             
             
 #----------------------------- CommentApi -------------------------------------------------
