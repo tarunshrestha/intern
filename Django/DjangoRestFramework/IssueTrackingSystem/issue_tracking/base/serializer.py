@@ -95,7 +95,7 @@ class TicketSerializer(serializers.ModelSerializer):
         return validated_data
     
     def create(self, validated_data):
-        print("-------------------------------------------------------------")
+        # print("-------------------------------------------------------------")
         # print(self.context.get('request').user.id)
         user = self.context.get('request').user
         if CustomUser.objects.get(id = user.id).groups.first() != Group.objects.get(name = "NormalUser"):
@@ -104,15 +104,19 @@ class TicketSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"title":"Title already exists."})
         if len(validated_data["assigned_to"]) == 0:
             validated_data["assigned_to"] = [Group.objects.get(name = "L1").id]
-        print("-------------------------------------------------------------")
+        # print("-------------------------------------------------------------")
         validated_data['created_user'] = user
 
         return super().create(validated_data)
     
     def update(self, instance, validated_data):
-        group = CustomUser.objects.get(id = validated_data["recent_user"].id).groups.first().id
-        # print('------------------------------')
-        # print(validated_data, instance)
+        print("------------------------------------------------")
+        print(self.context.get('request'))
+        user = self.context.get('request').user
+
+        group = CustomUser.objects.get(id = user.id).groups.first().id
+        print('------------------------------')
+        print(validated_data, instance, user)
         if group != 4:
             if Ticket.objects.get(id=instance.id).assigned_to.first().id != group:
                 raise serializers.ValidationError({"User":"Permission not granted."})
@@ -129,7 +133,7 @@ class TicketSerializer(serializers.ModelSerializer):
                     raise serializers.ValidationError({"User":"L3 user's cannot Forward."})
             elif validated_data['status'] == 'Resolved':
                 if 'solved_by' not in validated_data:
-                    validated_data['solved_by'] = validated_data['recent_user']
+                    validated_data['solved_by'] = user
             
         return super().update(instance, validated_data)
     
