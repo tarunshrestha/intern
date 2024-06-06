@@ -78,8 +78,9 @@ class LoginSerializer(serializers.Serializer):
 
 
 class TicketSerializer(serializers.ModelSerializer):
-    # created_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     created_user = serializers.SerializerMethodField()
+    username = serializers.CharField(source='created_user.username', read_only=True)
+    mr_title = serializers.CharField(source='title', required=False)
 
 
     class Meta:
@@ -94,6 +95,9 @@ class TicketSerializer(serializers.ModelSerializer):
     def validate(self, validated_data):
         return validated_data
     
+    # def get_mr_title(self, obj):
+    #     return obj
+    
     def create(self, validated_data):
         # print("-------------------------------------------------------------")
         # print(self.context.get('request').user.id)
@@ -104,7 +108,8 @@ class TicketSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"title":"Title already exists."})
         if len(validated_data["assigned_to"]) == 0:
             validated_data["assigned_to"] = [Group.objects.get(name = "L1").id]
-        # print("-------------------------------------------------------------")
+        print("-------------------------------------------------------------")
+        print(validated_data)
         validated_data['created_user'] = user
 
         return super().create(validated_data)
@@ -149,6 +154,8 @@ class TicketSerializer(serializers.ModelSerializer):
         # print("----------------------------------------------------")
         # print(serializer.data)
         return serializer.data
+    
+
     
 
 class CommentSerializer(serializers.ModelSerializer):
