@@ -46,11 +46,10 @@ class CustomUser(AbstractUser):
        return self.username
 
 
-
 class Ticket(models.Model):
-    created_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='token')
-    recent_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='token_editor', default='', blank=True, null=True)
-    solved_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='token_solver', default='', blank=True, null=True)
+    created_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='ticket')
+    recent_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='ticket_editor', default='', blank=True, null=True)
+    solved_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='ticket_solver', default='', blank=True, null=True)
     company = models.ManyToManyField(Company)
     title = models.CharField(max_length=150, unique=True)
     status_code = models.IntegerField()

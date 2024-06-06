@@ -123,6 +123,7 @@ class RegisterAPI(APIView):
 
 # ------------------------------------ Normal User ----------------------------------------------------------         
 class UserTicketApi(viewsets.ModelViewSet):
+    # queryset = Ticket.objects.all()
     queryset = Ticket.objects.annotate(
     severity_order=Case(
         When(severity='high', then=Value(1)),
@@ -184,7 +185,7 @@ class UserTicketApi(viewsets.ModelViewSet):
         else: return Response({'message':"Login first."}, status=status.HTTP_400_BAD_REQUEST)
         
     @action(detail=True, methods=["PATCH"])
-    def partial_update(self, request, pk=None):
+    def update(self, request, pk=None):
         data = request.data
         id = pk
         user_id = request.user.id
@@ -237,6 +238,7 @@ class UserTicketApi(viewsets.ModelViewSet):
 # ------------------------------------ Dev User ----------------------------------------------------------         
 
 class DevUserApi(viewsets.ModelViewSet):
+    # queryset = Ticket.objects.all()
     queryset= Ticket.objects.annotate(severity_order=Case(
         When(severity='high', then=Value(1)),
         When(severity='medium', then=Value(2)),
@@ -269,29 +271,19 @@ class DevUserApi(viewsets.ModelViewSet):
         return Response({'message':"Assigned Tickets.", 
                             'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
     
-    # def retrieve(self, request, pk=None):
-    #     ticket_id = pk
-    #     if id:
-    #         if Ticket.objects.filter(id=ticket_id).exists():
-    #             ticket = Ticket.objects.get(id = ticket_id)
-    #             serializer = self.get_serializer(ticket)                
-    #             return Response({'message':"Ticket details.",
-    #                              "data":serializer.data}, status=status.HTTP_202_ACCEPTED)
-    #         else:
-    #             return Response({"meassage":"Ticket id invalid."}, status=status.HTTP_400_BAD_REQUEST)
     @action(detail=True, methods=["PATCH"])
-    def partial_update(self, request, pk=None):
+    def update(self, request, pk=None):
         data = request.data # recent_user
         ticket_id = pk
         user_id = request.user.id
         user = CustomUser.objects.filter(id=user_id)
         if user.first().groups.first() == Group.objects.get(name = "NormalUser"):
             if not user.exists():
-                return Response({"message":"Something went wrong."}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"message":"Something went wrong."}, status=status.HTTP_404_NOT_FOUND)
             return redirect('user_ticket')
         tickets = Ticket.objects.filter(id=ticket_id)
         if not tickets.exists():
-            return Response({"message":"Something went wrong."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message":"Something went wrong."}, status=status.HTTP_404_NOT_FOUND)
         ticket = tickets.first()
         if user.first().groups.first() != ticket.assigned_to:
                     return redirect('developer_ticket')
@@ -305,10 +297,7 @@ class DevUserApi(viewsets.ModelViewSet):
         return Response({"message":"Something went wrong.",
                             "error":serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
-        
 
-
-            
             
 #----------------------------- CommentApi -------------------------------------------------
 class CommentApi(generics.ListCreateAPIView, mixins.DestroyModelMixin):
