@@ -259,7 +259,9 @@ class DevUserApi(viewsets.ModelViewSet):
         if id:
             if Ticket.objects.filter(id=ticket_id).exists():
                 ticket = Ticket.objects.get(id = ticket_id)
-                if user.first().groups.first() != ticket.assigned_to:
+                # print("-----------------------------------------")
+                # print(user.first().groups.first(), ticket,ticket.assigned_to.first())
+                if user.first().groups.first() != ticket.assigned_to.first():
                     return redirect('developer_ticket')
                 serializer = self.get_serializer(ticket)                
                 return Response({'message':"Ticket details.",
@@ -281,11 +283,14 @@ class DevUserApi(viewsets.ModelViewSet):
             if not user.exists():
                 return Response({"message":"Something went wrong."}, status=status.HTTP_404_NOT_FOUND)
             return redirect('user_ticket')
+        print("-----------------------------------------")
         tickets = Ticket.objects.filter(id=ticket_id)
+        print(tickets, user)
         if not tickets.exists():
             return Response({"message":"Something went wrong."}, status=status.HTTP_404_NOT_FOUND)
+        print("-----------------------------------------")
         ticket = tickets.first()
-        if user.first().groups.first() != ticket.assigned_to:
+        if user.first().groups.first() != ticket.assigned_to.first():
                     return redirect('developer_ticket')
         serializer = self.serializer_class(ticket, data=data, partial=True, context={"request":request})
         if serializer.is_valid():
