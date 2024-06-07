@@ -14,9 +14,9 @@ class Gender_choice(enum.Enum):
 
 
 class Education_choice(enum.Enum):
-    School = 1 
+    School = 1
     College = 2
-    Bachelors = 3 
+    Bachelors = 3
     Masters = 4
 
     __labels__ = {

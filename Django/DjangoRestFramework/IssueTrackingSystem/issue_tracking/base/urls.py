@@ -15,6 +15,8 @@ urlpatterns = [
     re_path(r'^developer/ticket(?:/(?P<pk>\d+))?/$', DevUserApi.as_view({'patch': 'update'}), name="developer_ticket"),
     path('comment/', CommentApi.as_view()),
 
+    re_path(r'^account/admin(?:/(?P<pk>\d+))?/$', AdminApi.as_view({'get':'get'}), name="admin"),
+
     
 
 ]

@@ -45,11 +45,11 @@ INSTALLED_APPS = [
     'base',
     'rest_framework',
     'rest_framework_simplejwt',
-    'rest_framework.authtoken',
+    # 'rest_framework.authtoken',
     'django_extensions',
-    'corsheaders',
+    # 'corsheaders',
     # 'django_cron',
-    'django_crontab',
+    # 'django_crontab',
     # 'background_task',
 ]
 
@@ -61,7 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    # 'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',    
 ]
 

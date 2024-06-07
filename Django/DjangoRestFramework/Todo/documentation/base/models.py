@@ -4,7 +4,7 @@ import datetime
 from django.contrib.auth.models import AbstractUser, Group, Permission, BaseUserManager
 from datetime import datetime, timedelta
 from django.utils import timezone 
-# from .enums import *
+
 
 # Create your models here.
 

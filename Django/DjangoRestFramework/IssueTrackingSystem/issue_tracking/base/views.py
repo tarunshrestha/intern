@@ -308,7 +308,7 @@ class DevUserApi(viewsets.ModelViewSet):
 class CommentApi(generics.ListCreateAPIView, mixins.DestroyModelMixin):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    pagination_class = PageNumberPagination
+    # pagination_class = PageNumberPagination
 
     def post(self, request):
         data = request.data
@@ -333,6 +333,31 @@ class CommentApi(generics.ListCreateAPIView, mixins.DestroyModelMixin):
         return Response({'message': 'Ticket comments.', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
 
         
+#----------------------------- AdminApi -------------------------------------------------
+class AdminApi(viewsets.ModelViewSet):
+    queryset = CustomUser.objects.all()
+    serializer_class = AdminSerializer
+    lookup_field = 'pk'
+
+    def get(self, request, pk = None):
+        user = request.user
+        id = pk
+        # print(CustomUser.objects.filter(username = 'admin',id = 1 ))
+        if user.id != 1 and user.username != 'admin':
+            return Response("Cannot access restricted area.", status=status.HTTP_400_BAD_REQUEST)
+        if pk:
+            normal_user = CustomUser.objects.filter(pk=pk)
+            if not normal_user.exists():
+                return Response("User id invalid.", status=status.HTTP_400_BAD_REQUEST)
+            serializer = self.get_serializer(normal_user.first())
+            return Response({'message':"Users details.",
+                          'data': serializer.data},
+                            status=status.HTTP_202_ACCEPTED)
+        serializer = self.get_serializer(self.queryset, many=True)
+        return Response({'message':"All Users.",
+                          'data': serializer.data},
+                            status=status.HTTP_202_ACCEPTED)
+
 
 
         

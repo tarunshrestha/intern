@@ -11,10 +11,11 @@ import re
 
 class UserSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(required=True, write_only=True)
+    # tickets = serializers.SerializerMethodField(read_only = True)
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'password', 'password2', 'date_joined', 'first_name', 'last_name',
+        fields = ['id', 'password2', 'date_joined', 'first_name', 'last_name',
                    'username', 'groups', 'phone', 'date_of_birth', 'gender',
                      'email', 'is_verified', 'otp', 'company']
 
@@ -39,6 +40,13 @@ class UserSerializer(serializers.ModelSerializer):
         validated_data.pop('password2', None)
         return super().update(instance, validated_data)
     
+    # def get_tickets(self, obj):
+    #     print("--------------------------------")
+    #     print(obj.id, 'check')
+    #     serializer = TicketSerializer(CustomUser.objects.filter(id = obj.id), many=True)
+
+    #     return serializer.data
+
 
 
 
@@ -150,7 +158,9 @@ class TicketSerializer(serializers.ModelSerializer):
         # users = CustomUser.objects.filter(id__in=user_ids)
         # serializer = UserSerializer(users, many=True)
 
-        serializer = UserSerializer(CustomUser.objects.get(id = obj.created_user.id))
+        # serializer = UserSerializer(CustomUser.objects.get(id = obj.created_user.id))
+        serializer = UserSerializer(CustomUser.objects.get(id = obj.id))
+
         # print("----------------------------------------------------")
         # print(serializer.data)
         return serializer.data
@@ -172,4 +182,19 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 
+class AdminSerializer(serializers.ModelSerializer):
+    tickets = serializers.SerializerMethodField(read_only = True)
 
+    class Meta:
+        model = CustomUser
+        fields = "__all__"
+
+    
+    def get_tickets(self, obj):
+        # print("--------------------------------")
+        # print(obj, 'check')
+        # breakpoint()
+        ticket = Ticket.objects.filter(created_user = obj.id)
+        serializer = TicketSerializer(ticket, many=True)
+        # breakpoint()
+        return serializer.data

@@ -4,7 +4,7 @@ from django_enumfield import enum
 
 from datetime import datetime, timedelta
 from django.utils import timezone 
-from dateutil.relativedelta import relativedelta
+# from dateutil.relativedelta import relativedelta
 from django.contrib.auth.models import AbstractUser, Group, Permission, BaseUserManager
 
 # Create your models here.

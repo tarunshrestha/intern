@@ -1,20 +1,20 @@
-from datetime import datetime, timedelta
-from django.utils import timezone
-from django_cron import CronJobBase, Schedule
-from .models import *
-
-
-def UserValidationCheck():
-    date = timezone.now()
-    users = CustomUser.objects.filter(is_verified = False)
-    print(users)
-    for user in users:
-        print(user)
-        if (date - user.date_joined)  > timedelta(days=1):
-            user.delete()
-
-def test():
-    print("Testing 121212")
+# from datetime import datetime, timedelta
+# from django.utils import timezone
+# from django_cron import CronJobBase, Schedule
+# from .models import *
+#
+#
+# def UserValidationCheck():
+#     date = timezone.now()
+#     users = CustomUser.objects.filter(is_verified = False)
+#     print(users)
+#     for user in users:
+#         print(user)
+#         if (date - user.date_joined)  > timedelta(days=1):
+#             user.delete()
+#
+# def test():
+#     print("Testing 121212")
 
 
 
