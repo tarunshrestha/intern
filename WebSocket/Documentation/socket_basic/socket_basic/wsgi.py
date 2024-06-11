@@ -1,5 +1,5 @@
 """
-WSGI config for documentation project.
+WSGI config for socket_basic project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'documentation.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'socket_basic.settings')
 
 application = get_wsgi_application()
