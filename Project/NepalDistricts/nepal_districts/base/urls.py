@@ -7,7 +7,10 @@ urlpatterns = [
     path('municipality/update/<int:pk>', MunicipalityApi.as_view({'get':'retrieve', 'post':'create'})),
 
     # path('add/', add_districts, name='add-districts'),
-    path('export/', export_data, name='export'),
+    # path('export/', export_data, name='export'),
+    
+    path('table/', table, name='table'),
+    path('pdf/', render_pdf_view, name='pdf'),
 
 
 

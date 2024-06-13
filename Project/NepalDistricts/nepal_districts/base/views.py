@@ -10,17 +10,22 @@ from rest_framework import status
 from rest_framework.response import Response
 from nepali_municipalities import NepalMunicipality
 import openpyxl
-# from xlsx2 import xlsx2pdf
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+
+
 # Create your views here.
 def index(request):
     nep = NepalMunicipality()
     districts = nep.all_districts()
-    municipalities = NepalMunicipality('Syangja').all_municipalities()
-    muncipality_info = NepalMunicipality().all_data_info("Arjunchaupari")
+    # municipalities = NepalMunicipality('Syangja').all_municipalities()
+    # muncipality_info = NepalMunicipality().all_data_info("Arjunchaupari")
 
-    print(muncipality_info)
+    print(districts)
     print("----------------------------------------")
-    print(municipalities)
+    # for i in districts:
+    #     District.objects.create(name = i)
+    # print(municipalities)
     # breakpoint()
     return HttpResponse("Test")
 
@@ -41,6 +46,7 @@ def add_districts(request):
             municipalitie = NepalMunicipality().all_data_info(f'{municipalities[i]}') # all muncipalities
             mun = Muncipality.objects.filter(name = municipalitie[0]['name'])
             if not mun.exists():
+                # breakpoint()
                 province = Province.objects.get_or_create(name =municipalitie[0]['province'])
                 data = Muncipality.objects.create(name=municipalitie[0]['name'] ,province_id=province[0], district_id=district)
                 data.save()
@@ -50,7 +56,6 @@ def add_districts(request):
 
 def export_data(request):
     queryset = Muncipality.objects.all()
-
     workbook = openpyxl.Workbook()
     sheet = workbook.active
     sheet.title = 'Nepal Districts'
@@ -68,9 +73,31 @@ def export_data(request):
     # workbook.save('nepal_districts.xlsx')
 
     workbook.save('nepal_districts.csv')
-    pdf = 'nepal_districts.pdf'
-
-
+    # pdf = 'nepal_districts.pdf'
     return HttpResponse("Excel file has been created successfully.")
+
+
+def table(request):
+    data = Muncipality.objects.order_by('name')
+    return render(request, 'table.html', context={'data':data})
+
+
+def render_pdf_view(request):
+    data = Muncipality.objects.order_by('name')
+    context = {'data': data}
+
+    template_path = 'templates/table.html'
+
+    template = get_template(template_path)
+    html = template.render(context)
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'filename="table.pdf"'
+
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    if pisa_status.err:
+        return HttpResponse('PDF generation failed: %s' % pisa_status.err)
+
+    return response
 
 

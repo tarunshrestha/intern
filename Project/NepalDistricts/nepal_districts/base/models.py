@@ -12,7 +12,7 @@ class Country(BaseModel):
         return self.name    
 
 class Province(BaseModel):
-    country_id = models.ForeignKey(Country, on_delete=models.CASCADE, related_name='province', null=True, default=1)
+    country_id = models.ForeignKey(Country, on_delete=models.CASCADE, related_name='province', null=True, default=156)
 
     def __str__(self):
         return self.name  
@@ -27,7 +27,7 @@ class District(BaseModel):
 class Muncipality(BaseModel):
     district_id =  models.ForeignKey(District, on_delete=models.CASCADE, related_name="muncipality", null=True)
     province_id = models.ForeignKey(Province, on_delete=models.CASCADE, related_name="muncipality", null=True)
-    country_id = models.ForeignKey(Country, on_delete=models.CASCADE, related_name='muncipality', null=True, default=1)
+    country_id = models.ForeignKey(Country, on_delete=models.CASCADE, related_name='muncipality', null=True, default=156)
 
     def __str__(self):
         return self.name  
