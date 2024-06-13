@@ -78,12 +78,12 @@ def export_data(request):
 
 
 def table(request):
-    data = Muncipality.objects.order_by('name')
+    data = Muncipality.objects.filter(id__lt = 180)
     return render(request, 'table.html', context={'data':data})
 
 
 def render_pdf_view(request):
-    data = Muncipality.objects.order_by('name')
+    data = Muncipality.objects.filter(id__lt = 180)
     context = {'data': data}
 
     template_path = 'templates/table.html'
