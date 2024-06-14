@@ -48,6 +48,7 @@
 </body>
 <script>
     function scrollToBottom() {
+
         var chatContainer = document.getElementById("chatContainer");
         chatContainer.scrollTop = chatContainer.scrollHeight;
     }
@@ -55,9 +56,10 @@
     const websocketProtocol = window.location.protocol === "https:" ? "wss" : "ws";
     const wsEndpoint = `${websocketProtocol}://${window.location.host}/ws/notification/{{room_name}}/`;
     const socket = new WebSocket(wsEndpoint);
-
+    console.log(socket)
     document.getElementById('message-form').addEventListener('submit', function(event){
         event.preventDefault();
+        console.log("Test 1 ")
         const message = document.getElementById('msg').value;
         socket.send(
             JSON.stringify({
@@ -70,14 +72,17 @@
 
     // response from consumer on server
     socket.addEventListener("message", (event) => {
+        console.log("Test 2")
+
         const messageData = JSON.parse(event.data)['message'];
         console.log(messageData);
         
         var sender = messageData['sender'];
+        console.log(sender);
         var message = messageData['message'];
 
         // empty message input field after message has been sent
-        if (sender == {{user}}){
+        if (sender == '{{user}}'){
             document.getElementById('msg').value = '';
         }
 
@@ -90,7 +95,7 @@
         }
         scrollToBottom();
 
-    });
+        });
 
     socket.onopen = (event) => {
         console.log("WebSocket connection opened!");
