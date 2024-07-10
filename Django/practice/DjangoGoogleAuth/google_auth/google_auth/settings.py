@@ -157,7 +157,12 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-SOCIALACCOUNT_FORMS = {
-    'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
-    'signup': 'allauth.socialaccount.forms.SignupForm',
-}
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# SOCIALACCOUNT_FORMS = {
+#     'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
+#     'signup': 'allauth.socialaccount.forms.SignupForm',
+# }
+
+ACCOUNT_AUTHENICATION_METHOD = "email"
+ACCOUNT_EMAIL_REQUIRED = True

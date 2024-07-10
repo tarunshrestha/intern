@@ -3,7 +3,7 @@ from allauth.account.views import LoginView
 from .views import *
 
 urlpatterns = [
-    path('login/', LoginView.as_view()),
-    path('', home)
+    # path('login/', LoginView.as_view()),
+    path('accounts/profile/', profile)
 
 ]
