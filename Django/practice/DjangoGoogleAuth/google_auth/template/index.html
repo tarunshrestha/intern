@@ -1,0 +1,7 @@
+{% load socialaccount %}
+
+<a href="{% provider_login_url "openid" openid="https://www.google.com/accounts/o8/id" next="/success/url/" %}">Google</a>
+<a href="{% provider_login_url "twitter" %}">Twitter</a>
+<br>
+<a href="{% provider_login_url "twitter" process="connect" %}">Connect a Twitter account</a>
+
