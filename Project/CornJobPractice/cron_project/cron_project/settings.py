@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_crontab',
+    'django_seed',
     'base',
 ]
 
@@ -129,3 +130,7 @@ CRONJOBS = [
     ('*/1  * * * *', 'base.cron.auto_create_test', ['base'])
 
 ]
+
+MANAGEMENT_MODULES = {
+    'base.command': 'base.command',
+}
