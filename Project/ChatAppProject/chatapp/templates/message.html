@@ -37,7 +37,7 @@
                     <div class="form">
                         <form action="" id="message-form" method="POST">
                             {% csrf_token %}
-                            <textarea id="msg" cols="30" name="message" rows="10" placeholder="Enter your message" required></textarea>
+                            <input style="max-width: 90%; width:100%; height:40px; border-radius: 12px;" id="msg" cols="30" name="message" rows="10" placeholder="Enter your message" required/>
                             <button class="submit" type="submit">Send</button>
                         </form>    
                     </div>

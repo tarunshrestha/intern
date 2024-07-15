@@ -44,7 +44,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         message = event['message']
 
         # Debug: Print message before saving to DB
-        print(f"Message to save: {message}")
+        # print(f"Message to save: {message}")
 
         await self.create_message(message)
 
@@ -54,7 +54,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         }
 
         # Debug: Print response data before sending to WebSocket
-        print(f"Sending response data: {response_data}")
+        # print(f"Sending response data: {response_data}")
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({'message': response_data}))
