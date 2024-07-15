@@ -12,3 +12,10 @@ def autofeed(request):
     except Exception as e :
         return HttpResponse(f'Error: {e}')
     
+
+def custom_permission_denied_view(request, exception):
+    return render(request, '403.html', {'message': str(exception)}, status=403)
+
+
+def index(request):
+    return HttpResponse("Hello")
