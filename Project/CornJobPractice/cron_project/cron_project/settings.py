@@ -51,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'middleware.main.ExampleMiddleware'
+    'middleware.main.OrganizationMiddleware'
 ]
 
 ROOT_URLCONF = 'cron_project.urls'
