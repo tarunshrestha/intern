@@ -1,0 +1,14 @@
+Ubuntu:
+    docker pull ubuntu
+
+    docker run ubuntu  # locally installed (Pulls automatically if not installed.)
+
+
+Containers:
+Check containers:
+    docker ps
+    docker ps -a # for all containers
+
+
+To start a container:
+    docker run -it ubuntu # -it = interactive
