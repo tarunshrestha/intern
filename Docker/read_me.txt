@@ -1,3 +1,4 @@
+##  Linux System  ##
 For non-Gnome Desktop environments, gnome-terminal must be installed:
   sudo apt install gnome-terminal
 
@@ -22,4 +23,25 @@ See Images Stored in device:
 
 
 Run Docker:
-  docker run hello-docker
+  docker run <Docker_image_name>
+
+
+##    Docker Hub build, connect and Push  ##
+Create account in docker Hub
+
+Build with docker username and respository:
+  docker build -t tarunshrestha/first_try:hello-docker .
+
+Login Docker:
+  docker login
+
+Docker Push:
+  docker push tarunshrestha/first_try:hello-docker
+
+Check present images:
+  docker images
+
+
+Pull Docker:
+  docker push tarunshrestha/first_try
+  
