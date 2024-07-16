@@ -45,14 +45,18 @@ class ExampleMiddleware:
     #     return JsonResponse(response_data, status=400)
 
 
-class OrganizationMiddleware:
-    def __init__(self, get_response):
-        self.get_response = get_response
+# class OrganizationMiddleware:
+#     def __init__(self, get_response):
+#         self.get_response = get_response
 
-    def __call__(self, request, *args, **kwargs):
-        response = self.get_response
-        breakpoint()
-        return response
+#     def __call__(self, request, *args, **kwargs):
+#         response = self.get_response(request)
+#         user = request.user.id
+#         if user.organization.is_blocked:
+#             raise PermissionDenied("Organization is blocked.")
+
+#         # breakpoint()
+#         return response
 
 
 
