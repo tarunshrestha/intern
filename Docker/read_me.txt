@@ -10,3 +10,16 @@ Check Docker:
   docker compose version
   docker version
 
+Intall Docker in visual studio code.
+
+Create Image: 
+  docker build -t <Docker_file_name> <File_location[eg .]>
+  sudo docker build -t <Docker_file_name> <File_location[eg .]>
+
+
+See Images Stored in device:
+  sudo docker image ls
+
+
+Run Docker:
+  docker run hello-docker
