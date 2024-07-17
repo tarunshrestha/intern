@@ -118,7 +118,7 @@ def patch_todo(request):
 # -------------------------------------------- Class Based User --------------------------
 class UserAPI(APIView):
     def get(self,request):
-        id = request.GET.get('id')
+        id = request.user.id
         if CustomUser.objects.filter(id = id).exists():
             user = CustomUser.objects.get(id = id)
             serializer = UserSerializer(user)
@@ -259,7 +259,7 @@ class TodoView(APIView):
         # if request.user.is_authenticated:
         #     return Response({'detail': 'You need to registered or logged in.'})
 
-        id = request.GET.get('id')
+        id = request.user.id
         todo_id = request.GET.get('tid') 
         if id:
             todo = CustomUser.objects.get(id=id).todo.all()

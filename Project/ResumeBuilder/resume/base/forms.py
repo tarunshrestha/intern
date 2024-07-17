@@ -46,7 +46,7 @@ class RegisterForm(forms.Form):
         username = forms.CharField(max_length=50)
         password = forms.CharField(max_length=50)
         password2 = forms.CharField(max_length=50)
-        date_of_birth = forms.DateTimeField()
+        # date_of_birth = forms.DateTimeField()  Test@123
         address = forms.CharField(max_length=100)
         phone = forms.CharField(max_length=15)
 
