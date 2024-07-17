@@ -150,7 +150,7 @@ REST_FRAMEWORK = {
     #     'rest_framework.authentication.SessionAuthentication',
     # ],
     # 'DEFAULT_PERMISSION_CLASSES':[
-        # 'rest_framework.permissions.IsAuthenticated',
+    #     'rest_framework.permissions.IsAuthenticated',
     # ],
 }
 
@@ -160,10 +160,10 @@ SIMPLE_JWT = {
     "ALGORITHM": "HS256",
 }
 
-CRONJOBS = [
-    ('*/1 * * * *', 'base.cron.UserValidationCheck'),
-    ('*/1 * * * *', 'base.cron.test'),
-]
+# CRONJOBS = [
+#     ('*/1 * * * *', 'base.cron.UserValidationCheck'),
+#     ('*/1 * * * *', 'base.cron.test'),
+# ]
 # CORN_CLASS = [
 #     'base.cron.UserValidationCheck',
 # ]

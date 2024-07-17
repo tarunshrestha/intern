@@ -6,14 +6,14 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
-from rest_framework import status
+from rest_framework import status, viewsets
 from django.contrib.auth import login
 
 from .serializer import *
 from .models import *
-from .email import Email
+# from .email import Email
 
-email = Email()
+# email = Email()
 
 # Create your views here.
 @api_view(['GET', 'POST', "PATCH"])
@@ -194,22 +194,24 @@ class LoginUser(APIView):
                 'message':"Something went wrong"
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-class RegisterAPI(APIView):
+class RegisterAPI(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
+    serializer_class = UserSerializer
 
-    def post(self, request):
-            serializer = UserSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                email.send_otp(serializer.data['email'])
-                return Response({
-                    'message': "User Registered Successfully.",
-                    'data': serializer.data
-                }, status=status.HTTP_201_CREATED)
-            return Response({
-                'message':"User Form Error.",
-                'errors': serializer.errors
-                }, status=status.HTTP_400_BAD_REQUEST)
+
+    # def post(self, request):
+            # serializer = UserSerializer(data=request.data)
+            # if serializer.is_valid():
+                # serializer.save()
+                # email.send_otp(serializer.data['email'])
+                # return Response({
+                    # 'message': "User Registered Successfully.",
+                    # 'data': serializer.data
+                # }, status=status.HTTP_201_CREATED)
+            # return Response({
+                # 'message':"User Form Error.",
+                # 'errors': serializer.errors
+                # }, status=status.HTTP_400_BAD_REQUEST)
         # except Exception as e:
         #     print(e)
         #     return Response({

@@ -12,7 +12,7 @@ urlpatterns = [
     # path('patch_todo/', patch_todo, name='patch_todo'),
 
     path('todo/', TodoView.as_view()),
-    path('register/', RegisterAPI.as_view()),
+    path('register/', RegisterAPI.as_view({'post':'create'}), name='register'),
     path('verify/', VerifyOTP.as_view()),
     path('login/', LoginUser.as_view()),
     path('userinfo/', UserAPI.as_view()),
