@@ -1,2 +1,3 @@
 django-seed
 django
+djangorestframework
