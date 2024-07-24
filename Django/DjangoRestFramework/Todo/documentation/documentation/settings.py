@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     # 'rest_framework.authtoken',
     'django_extensions',
+    'corsheaders',
     # 'corsheaders',
     # 'django_cron',
     # 'django_crontab',
@@ -61,8 +62,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',    
+    'django.middleware.security.SecurityMiddleware',
 ]
 
 ROOT_URLCONF = 'documentation.urls'
@@ -167,5 +169,7 @@ SIMPLE_JWT = {
 # CORN_CLASS = [
 #     'base.cron.UserValidationCheck',
 # ]
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 

@@ -91,20 +91,36 @@ class LoginSerializer(serializers.Serializer):
 
 
     def validate(self, data):
+        # email = data.get('email')
+        # password = data.get('password')
+        # # password = make_password(password)
+        # # password = make_password(password)
+        # if not CustomUser.objects.filter(email = email).exists():
+        #     raise serializers.ValidationError({'email':'Email doesnot exists.'})
+        # user = CustomUser.objects.get(email = email)
+        # # if user.password != password:
+        # #     raise serializers.ValidationError({'password':'Password not matched.'})
+        # if email and password:
+        #     user = authenticate(email=email, password=password)
+        #     if not user:
+        #         breakpoint()
+        #         raise serializers.ValidationError({'password':'Password not matched.'})
+
+        #     # user = authenticate(request=self.context.get('request'),
+        #     #                     email=email, password=password)
+
         email = data.get('email')
         password = data.get('password')
-        # password = make_password(password)
-        # password = make_password(password)
-        if not CustomUser.objects.filter(email = email).exists():
-            raise serializers.ValidationError({'email':'Email doesnot exists.'})
-        user = CustomUser.objects.get(email = email)
-        if user.password != password:
-            raise serializers.ValidationError({'password':'Password not matched.'})
-        if email and password:
-            user = authenticate(email=email, password=password)
-                                    
-            # user = authenticate(request=self.context.get('request'),
-            #                     email=email, password=password)
+
+        if not CustomUser.objects.filter(email=email).exists():
+            raise serializers.ValidationError({'email': 'Email does not exist.'})
+        user = CustomUser.objects.get(email=email)
+
+        # user = authenticate(email=email, password=password)
+        
+        if password != user.password:
+            raise serializers.ValidationError({'password': 'Password is incorrect.'})
+
         data['email'] = email.lower()
         data['user'] = user
         return data

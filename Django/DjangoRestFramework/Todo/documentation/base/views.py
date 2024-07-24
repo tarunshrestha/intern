@@ -118,7 +118,7 @@ def patch_todo(request):
 # -------------------------------------------- Class Based User --------------------------
 class UserAPI(APIView):
     def get(self,request):
-        id = request.user.id
+        id = request.GET.get('id')
         if CustomUser.objects.filter(id = id).exists():
             user = CustomUser.objects.get(id = id)
             serializer = UserSerializer(user)
